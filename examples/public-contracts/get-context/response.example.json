@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "result_count": 9,
+  "results": [
+    {
+      "clean_text": "Full content"
+    },
+    {
+      "clean_text": ""
+    },
+    {
+      "clean_text": "USER: # Public Summary — Weft\n\n## What Weft is\n\nWeft is an archive-first context and knowledge infrastructure project for AI-assisted workflows.\n\nIt is designed to turn temporary AI interactions, workflow outputs, and project decisions into structured, searchable, project-linked records that can be retrieved later to support continuity across sessions, tools, and models.\n\nWeft is not a chatbot, Notion template, or Make tutorial. It is a system architecture project focused on persistent context, deterministic workflow behavior, and controlled knowledge capture.\n\n## Problem it solves\n\nAI-assisted work often breaks down when useful context remains trapped inside temporary conversations, disconnected notes, or tool-specific outputs.\n\nThis creates recurring problems:\n\n* important decisions are hard to find later\n* context must be manually reconstructed\n* project continuity depends on memory or copy-paste\n\n[public example content truncated for readability]"
+    },
+    {
+      "clean_text": ""
+    },
+    {
+      "clean_text": "Details"
+    },
+    {
+      "clean_text": "Conversation ID: 2026-06-17_1600_weft_public-summary"
+    },
+    {
+      "clean_text": "Start: 2026-06-17T16:00:00.000+02:00"
+    },
+    {
+      "clean_text": "Message count: 1"
+    },
+    {
+      "clean_text": "Content length: 3673 characters"
+    }
+  ],
+  "meta": {
+    "source": "Notion_Archive_Database",
+    "scenario": "get_context"
+  },
+  "message": null
+}

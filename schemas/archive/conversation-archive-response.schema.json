@@ -1,0 +1,81 @@
+{
+"$schema": "https://json-schema.org/draft/2020-12/schema",
+"$id": "schemas/archive/conversation-archive-response.schema.json",
+"title": "Conversation Archive Response",
+"description": "Public response schema for the archive_conversation workflow. This schema defines the client-facing confirmation returned after archive content has been accepted and stored.",
+"type": "object",
+"additionalProperties": false,
+"required": [
+"success",
+"project",
+"title",
+"start_time",
+"status",
+"content_handling",
+"notion"
+],
+"properties": {
+"success": {
+"type": "boolean",
+"description": "Indicates whether the archive request completed successfully."
+},
+"project": {
+"type": "string",
+"minLength": 1,
+"description": "Project associated with the archived content."
+},
+"title": {
+"type": "string",
+"minLength": 1,
+"description": "Human-readable title of the archived content."
+},
+"start_time": {
+"type": "string",
+"minLength": 1,
+"description": "Start time supplied for the archived work session. Public examples may use a human-readable time format such as '16:00 uur'."
+},
+"status": {
+"type": "string",
+"minLength": 1,
+"description": "Archive status returned by the workflow, such as 'archived'."
+},
+"content_handling": {
+"type": "object",
+"additionalProperties": false,
+"required": [
+"summarized",
+"shortened",
+"instruction"
+],
+"properties": {
+"summarized": {
+"type": "boolean",
+"description": "Indicates whether the archived content was summarized before storage."
+},
+"shortened": {
+"type": "boolean",
+"description": "Indicates whether the archived content was shortened before storage."
+},
+"instruction": {
+"type": "string",
+"minLength": 1,
+"description": "Human-readable handling instruction or confirmation."
+}
+}
+},
+"notion": {
+"type": "object",
+"additionalProperties": false,
+"required": [
+"url"
+],
+"properties": {
+"url": {
+"type": "string",
+"minLength": 1,
+"description": "Public-safe Notion URL or placeholder for the archived record."
+}
+}
+}
+}
+}

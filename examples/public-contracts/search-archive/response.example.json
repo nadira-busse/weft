@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "results_count": 1,
+  "results": [
+    {
+      "id": "public-example-record-001",
+      "title": "Public Summary — Weft",
+      "project": "weft",
+      "summary": "Public summary of Weft as an archive-first context and knowledge infrastructure project for AI-assisted workflows.",
+      "model_origin": "ChatGPT",
+      "conversation_id": "2026-06-17_1600_weft_public-summary"
+    }
+  ],
+  "meta": {
+    "source": "Notion_Archive_Database",
+    "scenario": "search_archive"
+  },
+  "message": null
+}

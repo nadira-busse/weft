@@ -1,0 +1,44 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Build / temp
+dist/
+build/
+tmp/
+.cache/
+
+# Archives
+*.zip
+
+# Local working notes
+to-do-later/
+

@@ -1,0 +1,76 @@
+<svg width="680" height="800" viewBox="0 0 680 800" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#378ADD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <style>
+    text { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .th { font-size: 14px; font-weight: 500; fill: #1a1a1a; }
+    .ts { font-size: 12px; font-weight: 400; fill: #666; }
+  </style>
+</defs>
+
+<!-- Background -->
+<rect width="680" height="800" fill="#ffffff"/>
+
+<!-- Title -->
+<text class="th" x="340" y="32" text-anchor="middle">Weft System Overview</text>
+<text class="ts" x="340" y="50" text-anchor="middle">Archive-First Architecture for Deterministic AI Workflows</text>
+
+<!-- Box 1: AI Clients -->
+<rect x="100" y="80" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text class="th" x="340" y="105" text-anchor="middle" dominant-baseline="central">AI Clients</text>
+<text class="ts" x="340" y="127" text-anchor="middle" dominant-baseline="central">ChatGPT, Claude, etc.</text>
+<text class="ts" x="340" y="145" text-anchor="middle" dominant-baseline="central">Stateless interaction (no persistent memory)</text>
+
+<!-- Arrow 1 -->
+<line x1="340" y1="160" x2="340" y2="200" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Box 2: Invocation Interface -->
+<rect x="100" y="200" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text class="th" x="340" y="225" text-anchor="middle" dominant-baseline="central">Invocation Interface</text>
+<text class="ts" x="340" y="247" text-anchor="middle" dominant-baseline="central">MCP / API / Webhooks</text>
+<text class="ts" x="340" y="265" text-anchor="middle" dominant-baseline="central">Request boundary</text>
+
+<!-- Arrow 2 -->
+<line x1="340" y1="280" x2="340" y2="320" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Box 3: Orchestration Layer -->
+<rect x="100" y="320" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text class="th" x="340" y="345" text-anchor="middle" dominant-baseline="central">Orchestration Layer</text>
+<text class="ts" x="340" y="367" text-anchor="middle" dominant-baseline="central">Workflow execution</text>
+<text class="ts" x="340" y="385" text-anchor="middle" dominant-baseline="central">Routing / retries / failure handling</text>
+
+<!-- Arrow 3 -->
+<line x1="340" y1="400" x2="340" y2="440" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Box 4: Context Layer -->
+<rect x="100" y="440" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text class="th" x="340" y="465" text-anchor="middle" dominant-baseline="central">Context Layer</text>
+<text class="ts" x="340" y="487" text-anchor="middle" dominant-baseline="central">Deterministic transformation</text>
+<text class="ts" x="340" y="505" text-anchor="middle" dominant-baseline="central">Context reconstruction</text>
+
+<!-- Arrow 4 -->
+<line x1="340" y1="520" x2="340" y2="560" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Box 5: Data Layer -->
+<rect x="100" y="560" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text class="th" x="340" y="585" text-anchor="middle" dominant-baseline="central">Data Layer</text>
+<text class="ts" x="340" y="607" text-anchor="middle" dominant-baseline="central">Archive system of record</text>
+<text class="ts" x="340" y="625" text-anchor="middle" dominant-baseline="central">Persistent structured storage</text>
+
+<!-- Arrow 5 -->
+<line x1="340" y1="640" x2="340" y2="680" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Box 6: Output -->
+<rect x="100" y="680" width="480" height="64" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text class="th" x="340" y="700" text-anchor="middle" dominant-baseline="central">Structured Context</text>
+<text class="ts" x="340" y="722" text-anchor="middle" dominant-baseline="central">Deterministically reconstructed and reusable across sessions</text>
+
+<!-- Side note -->
+<rect x="40" y="762" width="600" height="24" rx="4" fill="#f5f5f5" stroke="#d3d3d3" stroke-width="0.5"/>
+<text class="ts" x="340" y="778" text-anchor="middle" dominant-baseline="central">Archived interactions are persistently stored and reconstructable on request.</text>
+
+</svg>

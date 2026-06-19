@@ -1,0 +1,101 @@
+{
+"$schema": "https://json-schema.org/draft/2020-12/schema",
+"$id": "schemas/search/search-archive-response.schema.json",
+"title": "Search Archive Response",
+"description": "Public response schema for search_archive. This schema follows the actual public example response and returns public-safe archive result summaries.",
+"type": "object",
+"additionalProperties": false,
+"required": [
+"success",
+"results_count",
+"results",
+"meta",
+"message"
+],
+"properties": {
+"success": {
+"type": "boolean",
+"description": "Indicates whether the search request completed successfully."
+},
+"results_count": {
+"type": "integer",
+"minimum": 0,
+"description": "Number of archive records returned."
+},
+"results": {
+"type": "array",
+"description": "Public-safe archive search results.",
+"items": {
+"type": "object",
+"additionalProperties": false,
+"required": [
+"id",
+"title",
+"project",
+"summary",
+"model_origin",
+"conversation_id"
+],
+"properties": {
+"id": {
+"type": "string",
+"minLength": 1,
+"description": "Public-safe archive record identifier."
+},
+"title": {
+"type": "string",
+"minLength": 1,
+"description": "Human-readable archive title."
+},
+"project": {
+"type": "string",
+"minLength": 1,
+"description": "Associated project."
+},
+"summary": {
+"type": "string",
+"minLength": 1,
+"description": "Public-safe summary."
+},
+"model_origin": {
+"type": "string",
+"minLength": 1,
+"description": "Originating AI or workflow client label."
+},
+"conversation_id": {
+"type": "string",
+"minLength": 1,
+"description": "Stable conversation identifier."
+}
+}
+}
+},
+"meta": {
+"type": "object",
+"additionalProperties": false,
+"required": [
+"source",
+"scenario"
+],
+"properties": {
+"source": {
+"type": "string",
+"minLength": 1,
+"description": "Public source label."
+},
+"scenario": {
+"type": "string",
+"minLength": 1,
+"description": "Workflow scenario label."
+}
+}
+},
+"message": {
+"type": [
+"string",
+"null"
+],
+"description": "Optional human-readable response message."
+}
+}
+}

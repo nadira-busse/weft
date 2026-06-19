@@ -1,0 +1,48 @@
+{
+"$schema": "https://json-schema.org/draft/2020-12/schema",
+"$id": "schemas/search/search-archive-request.schema.json",
+"title": "Search Archive Request",
+"description": "Public request schema for the search_archive workflow. Supports conversation_id, query, project, date_from, date_to and limit as defined by the current Make input boundary.",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+"conversation_id": {
+"type": "string",
+"minLength": 1,
+"description": "Exact archived conversation identifier."
+},
+"query": {
+"type": "string",
+"minLength": 1,
+"description": "Explicit free-text search filter."
+},
+"project": {
+"type": "string",
+"minLength": 1,
+"description": "Project filter. The workflow normalizes this value internally before matching against the stored project key."
+},
+"date_from": {
+"type": "string",
+"format": "date",
+"description": "Inclusive lower date bound. When date_from and date_to are equal, the workflow treats the request as an exact-date search."
+},
+"date_to": {
+"type": "string",
+"format": "date",
+"description": "Inclusive upper date bound. When date_from and date_to are equal, the workflow treats the request as an exact-date search."
+},
+"limit": {
+"type": "integer",
+"minimum": 1,
+"default": 10,
+"description": "Optional maximum number of results to return. The workflow uses 10 when no limit is provided."
+}
+},
+"anyOf": [
+{ "required": ["conversation_id"] },
+{ "required": ["query"] },
+{ "required": ["project"] },
+{ "required": ["date_from"] },
+{ "required": ["date_to"] }
+]
+}
