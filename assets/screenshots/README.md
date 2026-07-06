@@ -8,6 +8,19 @@ The screenshots show that key workflows run in practice. They do not expose priv
 
 ## Included screenshots
 
+### MCP Server Connected
+
+![ChatGPT MCP server connected](chatgpt-mcp-server-connected.png)
+
+Shows the private `Make_MCP_Server` connection enabled inside ChatGPT. This provides public-safe evidence that Weft can be invoked through an MCP-enabled boundary from ChatGPT, without exposing server configuration, credentials, URLs, Make scenario details, Notion database IDs or private archive content.
+
+![Claude MCP server connected](claude-mcp-server-connected.png)
+
+Shows the same private `Make_MCP_Server` connection available as a custom web connector in Claude. This supports the architectural claim that Weft is designed around an AI-client-agnostic invocation boundary, rather than being tied to one chat interface.
+
+These screenshots prove the MCP connection boundary. Runtime workflow execution is documented separately through the Make and Notion evidence screenshots below.
+
+
 ### Make — Archive Conversation
 
 ![Archive workflow run history](make-archive-conversation-run-history.png)
