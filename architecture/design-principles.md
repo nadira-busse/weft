@@ -93,19 +93,13 @@ Weft keeps error logging separate from normal archive records because execution 
 
 ## Composable Workflow Design
 
-Weft uses smaller workflow components where that makes the system easier to maintain.
+Composable workflow design means that repeated or supporting logic can be placed in smaller workflow components.
 
-A component should have:
+For example, Notion block text extraction can live in a separate subscenario instead of being duplicated in every workflow that needs it.
 
-* one main responsibility
-* clear inputs
-* clear outputs
-* reusable behavior
-* visible failure modes
+This reduces duplication and makes maintenance easier.
 
-This is why supporting logic, such as Notion block text extraction, can live in a separate subscenario instead of being duplicated inside every workflow.
-
-Composable design is useful only when it reduces complexity. If splitting a workflow makes the system harder to understand, it is not an improvement.
+However, splitting workflows is only useful when it makes the system easier to understand. If decomposition creates more routing, more hidden dependencies or more debugging effort, it is not an improvement.
 
 ---
 

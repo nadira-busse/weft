@@ -26,7 +26,7 @@ You do not need to read the whole repository to understand the project.
 
 1. [`README.md`](./README.md) — what Weft is and why I built it
 2. [`proof/README.md`](./proof/README.md) — runtime proof and debugging evidence
-3. [`assets/screenshots/README.md`](./assets/screenshots/README.md) — public-safe screenshots
+3. [`assets/screenshots/README.md`](./assets/screenshots/README.md) — runtime screenshots
 4. [`status/known-limitations.md`](./status/known-limitations.md) — current boundaries and limitations
 
 For technical review:
@@ -43,20 +43,20 @@ For technical review:
 
 AI-assisted work often breaks down because useful context stays trapped in temporary places:
 
-* chat histories
-* workflow outputs
-* scattered notes
-* project updates
-* decisions that were not stored properly
+- chat histories
+- workflow outputs
+- scattered notes
+- project updates
+- decisions that were not stored properly
 
 That creates practical problems:
 
-* project context has to be reconstructed manually
-* decisions become hard to find
-* follow-up sessions do not reliably build on earlier work
-* outputs are difficult to audit or reuse
-* workflow errors are harder to trace
-* context is not portable across tools or AI clients
+- project context has to be reconstructed manually
+- decisions become hard to find
+- follow-up sessions do not reliably build on earlier work
+- outputs are difficult to audit or reuse
+- workflow errors are harder to trace
+- context is not portable across tools or AI clients
 
 Weft moves important context out of the chat and into an external archive.
 
@@ -70,18 +70,20 @@ I built a working archive-first system using Make and Notion.
 
 The system can:
 
-* archive AI conversations and workflow outputs
-* normalize incoming content into structured payloads
-* store archive records in Notion
-* link records to projects and daily logs
-* search archived work by project, date, query or conversation ID
-* retrieve stored context for follow-up work
-* record workflow errors for later diagnosis
-* separate source content from summaries, metadata and derived views
+- archive AI conversations and workflow outputs
+- normalize incoming content into structured payloads
+- store archive records in Notion
+- link records to projects and daily logs
+- search archived work by project, date, query or conversation ID
+- retrieve stored context for follow-up work
+- record workflow errors for later diagnosis
+- separate source content from summaries, metadata and derived views
 
 Make handles orchestration. Notion is the current human-readable system of record.
 
-ChatGPT, Claude, MCP-enabled workflows, webhooks or other clients can invoke the system if they send the expected payload shape.
+AI clients and workflow clients can invoke the system if they send the expected payload shape.
+
+In this repository, I document the MCP-enabled invocation route. The same logical archive, search and get-context flows can also be invoked from Custom GPTs through separate Make webhook scenarios in my working setup. Those webhook variants use the same archive system of record, but their scenario-level configuration is not documented here.
 
 ---
 
@@ -119,11 +121,11 @@ See: [`architecture/archive-conversation-flow.md`](./architecture/archive-conver
 
 Searches existing archive records through defined routes:
 
-* conversation ID
-* project
-* exact date
-* date range
-* query fallback
+- conversation ID
+- project
+- exact date
+- date range
+- query fallback
 
 Search does not rebuild full context. It selects bounded archive candidates.
 
@@ -131,7 +133,7 @@ Search does not rebuild full context. It selects bounded archive candidates.
 
 Retrieves archived content for continued work.
 
-Instead of relying on AI memory, context is rebuilt from persisted records.
+Instead of relying only on AI-client memory, context is rebuilt from persisted records.
 
 ---
 
@@ -139,12 +141,12 @@ Instead of relying on AI memory, context is rebuilt from persisted records.
 
 ![Weft System Overview](diagrams/weft-system-overview.svg)
 
-| Component           | Responsibility                                                            | Current implementation                            |
-| ------------------- | ------------------------------------------------------------------------- | ------------------------------------------------- |
-| AI / Client Surface | Sends input and receives output                                           | ChatGPT, Claude, MCP-enabled invocation, webhooks |
-| Orchestration Layer | Routes workflows, runs scenarios, handles retries and returns output      | Make                                              |
-| Context Layer       | Shapes payloads, prepares relations, normalizes data and rebuilds context | Make modules, JSON, variables                     |
-| Data Layer          | Stores archive records, project relations, daily logs and error records   | Notion                                            |
+| Component           | Responsibility                                                                                    | Current implementation                            |
+| ------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| AI / Client Surface | Sends input and receives output                                                                   | ChatGPT, Claude, MCP-enabled invocation, webhooks |
+| Orchestration Layer | Routes workflows, runs scenarios, handles retries and returns output                              | Make                                              |
+| Context Layer       | Shapes payloads, prepares relations, normalizes data and turns stored records into usable context | Make modules, JSON, variables                     |
+| Data Layer          | Stores archive records, project relations, daily logs and error records                           | Notion                                            |
 
 The important boundary is this:
 
@@ -175,15 +177,15 @@ This repository is designed to show the system without exposing private runtime 
 
 You can verify:
 
-* architecture model and workflow boundaries
-* archive conversation flow
-* public payload contracts
-* JSON schemas for public payload boundaries
-* public-safe example payloads
-* runtime screenshots
-* debugging proof cases
-* reusable workflow patterns
-* known limitations
+- architecture model and workflow boundaries
+- archive conversation flow
+- payload contracts
+- JSON schemas for request and response boundaries
+- example payloads
+- runtime screenshots
+- debugging proof cases
+- reusable workflow patterns
+- known limitations
 
 ### Archive-first context flow
 
@@ -203,11 +205,10 @@ Additional screenshots are documented in [`assets/screenshots/README.md`](./asse
 
 The [`proof/`](./proof/) directory documents issues I ran into while building Weft, including:
 
-* search contract stabilization
-* date range filtering
-* multi-result aggregation
-* relation traversal and identifier mapping
-* public-safe output boundaries
+- search contract stabilization
+- date range filtering
+- multi-result aggregation
+- relation traversal and identifier mapping
 
 These cases show where the workflow broke, what the root cause was and how I corrected it.
 
@@ -217,19 +218,17 @@ These cases show where the workflow broke, what the root cause was and how I cor
 
 Weft uses fixed request and response shapes, so each workflow knows what input to expect and what output to return.
 
-The repository includes public examples and schemas for:
+The repository includes examples and schemas for:
 
-* archive conversation
-* search archive
-* get context
+- archive conversation
+- search archive
+- get context
 
 See:
 
-* [`contracts/payload-contract.md`](./contracts/payload-contract.md)
-* [`schemas/`](./schemas/)
-* [`examples/public-contracts/`](./examples/public-contracts/)
-
-Public examples are sanitized and do not expose private Notion IDs, internal URLs, full database structures or sensitive content.
+- [`contracts/payload-contract.md`](./contracts/payload-contract.md)
+- [`schemas/`](./schemas/)
+- [`examples/public-contracts/`](./examples/public-contracts/)
 
 ---
 
@@ -242,6 +241,7 @@ I keep a small [`scripts/`](./scripts/) folder with the tooling I use to keep th
 ```powershell
 py .\scripts\validate_examples.py
 ```
+
 ```bash
 python3 scripts/validate_examples.py
 ```
@@ -251,17 +251,19 @@ Install the required Python dependency first if needed:
 ```powershell
 py -m pip install -r requirements.txt
 ```
+
 ```bash
 python3 -m pip install -r requirements.txt
 ```
 
-This validation covers only public contract examples. It does not validate private Make payloads, Notion records, internal mappings or production runtime data.
+This validation checks the documented example payloads against their schemas. It does not validate the full runtime implementation.
 
 **Internal link check** — scans every Markdown file in the repository and verifies that relative links resolve to a real file. No extra dependencies required:
 
 ```powershell
 py .\scripts\check_internal_links.py
 ```
+
 ```bash
 python3 scripts/check_internal_links.py
 ```
@@ -276,12 +278,12 @@ The [`patterns/`](./patterns/) directory captures reusable workflow patterns fro
 
 Examples include:
 
-* explicit existence checks
-* get-or-create upsert
-* idempotent archive writes
-* immutable field guards
-* validation-before-lookup
-* relation identifier mapping
+- explicit existence checks
+- get-or-create upsert
+- idempotent archive writes
+- immutable field guards
+- validation-before-lookup
+- relation identifier mapping
 
 These patterns came from problems I actually encountered while building the system.
 
@@ -291,20 +293,16 @@ They are included because they show how I think about workflow reliability, not 
 
 ## What Is Intentionally Not Published
 
-Some parts of the real system are not public because they include private workflow logic, personal project data or sensitive configuration.
-
 The repository does not publish:
 
-* private Notion database schemas
-* internal Notion IDs
-* webhook URLs
-* API keys or credentials
-* full Make scenario mappings
-* private runtime payloads
-* personal archive content
-* full MCP invocation configuration
-
-The goal is to show the architecture, evidence and learning process without leaking private operational details.
+- private Notion database schemas
+- internal Notion IDs
+- webhook URLs
+- API keys or credentials
+- full Make scenario mappings
+- private runtime payloads
+- personal archive content
+- full MCP invocation configuration
 
 ---
 
@@ -322,24 +320,23 @@ The goal is to show the architecture, evidence and learning process without leak
 
 ## Limitations
 
-Weft documents a working architecture and proof-of-build system.
+Weft documents a working architecture and implementation evidence.
 
 It is not:
 
-* a packaged SaaS product
-* a full open-source deployment package
-* a high-scale production backend
-* a replacement for dedicated observability, permissions or storage infrastructure
+- a packaged SaaS product
+- a full open-source deployment package
+- a high-scale production backend
+- a replacement for dedicated observability, permissions or storage infrastructure
 
 Current limitations:
 
-* Make scenarios are documented but not distributed as deployable blueprints.
-* Notion setup is not fully published.
-* Private implementation details are intentionally omitted.
-* Screenshots are redacted where needed.
-* Performance is limited by Make and Notion platform constraints.
-* Advanced permissioning and multi-user access are out of scope.
-* Production-grade observability would require a dedicated logging backend.
+- Make scenarios are documented but not distributed as deployable blueprints.
+- Notion setup is not fully published.
+- Screenshots are redacted where needed.
+- Performance is limited by Make and Notion platform constraints.
+- Advanced permissioning and multi-user access are out of scope.
+- Production-grade observability would require a dedicated logging backend.
 
 Known constraints are documented in [`status/`](./status/).
 
@@ -354,10 +351,10 @@ Known constraints are documented in [`status/`](./status/).
 ├── case-studies/          # Applied workflow case studies
 ├── contracts/             # Payload contract documentation
 ├── diagrams/              # System and workflow diagrams
-├── examples/              # Public-safe payload examples
+├── examples/              # Example payloads
 ├── patterns/              # Reusable workflow patterns
 ├── proof/                 # Runtime proof and debugging evidence
-├── schemas/               # JSON schemas for public payload boundaries
+├── schemas/               # JSON schemas for payload boundaries
 ├── scripts/               # Validation tooling: schema checks and internal link checks
 ├── status/                # Known limitations and system status
 ├── START-HERE.md

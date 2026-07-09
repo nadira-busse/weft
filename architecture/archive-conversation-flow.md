@@ -20,14 +20,14 @@ It is not one continuous pipeline.
 
 ### 1. Archive
 
-During or after an AI-assisted work session, a client or workflow invocation sends a structured payload.
+A client or scheduled workflow invocation sends a structured payload through the invocation interface.
 
-The orchestration layer validates, normalizes, links and stores that payload as an archive record.
+The orchestration layer validates the payload before linking. If a required field — such as project — is missing from the payload, the record is marked invalid, archiving stops before any lookup occurs, and the missing fields are returned to the caller.
 
-Where available, the record can be linked to related structures such as:
+For valid payloads, the archive record is normalized, linked and stored:
 
-* project records
-* daily log records
+- Project records — matched by name; if no matching project exists, a new project record and project key are created automatically.
+- Daily log records — matched by date; if no daily log exists for that day, one is created automatically on first archival.
 
 The archive record becomes the persistent source record for the archived interaction.
 
@@ -72,17 +72,11 @@ The archive is the source of record for explicitly archived workflow state.
 
 Validation, monitoring and error handling are cross-cutting concerns.
 
-They are not one single sequential step.
+They are not one single sequential step in the flow.
 
-In this flow, they support:
+In the current implementation, the orchestration layer is implemented in Make. It defines how Weft validates inputs, routes execution, handles failures and surfaces operational outcomes.
 
-* validating incoming payloads against the expected boundary
-* checking whether required identifiers and relations can be resolved
-* preventing unresolved or ambiguous writes
-* monitoring whether archive writes succeed or fail
-* logging persistent execution failures for later review
-
-Some transient execution failures may be retried by the orchestration layer or platform configuration.
+Some transient execution failures may be handled through Make platform configuration, such as retry settings, timeouts or error handlers.
 
 Persistent failures are surfaced through controlled failure handling and operational logging.
 

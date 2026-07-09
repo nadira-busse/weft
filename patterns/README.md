@@ -1,8 +1,8 @@
 # Weft Engineering Patterns
 
-Reusable patterns for designing deterministic automation and AI workflow systems with persistent state and reliable execution behavior.
+Reusable engineering patterns found while building Weft.
 
-This library documents recurring system-level problems and their practical solutions, based on patterns found while building Weft.
+I documented these patterns because the same reliability problems kept appearing across the archive and retrieval workflows.
 
 The focus is on:
 
@@ -27,7 +27,7 @@ They reflect real workflow behavior, including platform constraints such as:
 * dependency on stable identifiers for correctness
 * non-atomic execution and retry behavior
 
-The patterns describe design decisions that can apply beyond these tools, but include Make and Notion context where it materially affects correctness, determinism or data integrity.
+The patterns are documented from the Weft implementation context.
 
 ---
 
@@ -47,7 +47,7 @@ Patterns follow a consistent structure:
 * **Failure Modes** — what happens without the pattern
 * **Related Patterns** — complementary patterns
 
-Patterns focus on transferable design logic rather than step-by-step tool configuration.
+Patterns focus on the design logic behind the workflow, not on step-by-step Make configuration.
 
 ---
 
@@ -119,21 +119,17 @@ Common causes include:
 
 These patterns help make that behavior explicit.
 
-They are not presented as a full framework. They are reusable notes from a working system, written down so the same problems do not have to be solved from scratch each time.
+I do not present these patterns as a full framework. They are reusable notes from a working system, written down so I do not have to solve the same workflow problems from scratch each time.
 
 ---
 
 ## Relationship to Weft
 
-These patterns originate from the Weft architecture and support its intended reliability properties:
+These patterns support the reliability goals of Weft:
 
-* deterministic workflow behavior
+* predictable workflow behavior
 * idempotent persistence
 * stable archive identity
 * traceable execution behavior
 
-Although developed within Weft, the patterns may also be useful for:
-
-* automation systems
-* distributed workflows
-* AI-assisted systems with persistent state
+They explain why the archive and retrieval workflows are structured the way they are.

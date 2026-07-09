@@ -1,6 +1,6 @@
 # Proof
 
-This directory contains public-safe runtime evidence from the working Weft implementation.
+This directory contains runtime evidence from my working Weft implementation.
 
 The files in this directory show where Weft was tested, corrected and stabilized while running with Make and Notion. They are not architecture notes. They document concrete problems that appeared during execution and how they were fixed.
 
@@ -8,7 +8,7 @@ The files in this directory show where Weft was tested, corrected and stabilized
 
 ## What This Proof Layer Shows
 
-The proof cases show that Weft is not only described as an architecture. Parts of the system were actually exercised in a working workflow.
+The proof cases show that Weft is not only described as an architecture. The system was exercised through working Make and Notion workflows.
 
 The cases document:
 
@@ -17,7 +17,7 @@ The cases document:
 * multi-result retrieval handling
 * Make bundle and iterator behavior
 * Notion relation mapping
-* separation between internal storage and public workflow output
+* separation between stored records and workflow responses
 
 These are runtime-level problems. They matter because Weft depends on predictable archive, search and retrieval behavior.
 
@@ -40,7 +40,6 @@ Together, these cases show that:
 
 * workflow output is shaped deliberately before it is returned
 * search and retrieval behavior is tested against real platform behavior
-* internal Notion structures are not exposed as public contracts
 * Make iterator and bundle behavior is handled explicitly
 * errors and edge cases are corrected instead of hidden
 * deterministic behavior is created through checks and corrections, not assumptions
@@ -54,7 +53,7 @@ Together, these cases show that:
 | [`../architecture/`](../architecture/)                           | Explains the architecture and responsibility boundaries            |
 | [`../contracts/`](../contracts/)                                 | Explains the public payload boundaries                             |
 | [`../schemas/`](../schemas/)                                     | Defines validation for public request and response shapes          |
-| [`../examples/public-contracts/`](../examples/public-contracts/) | Shows public-safe example payloads                                 |
+| [`../examples/public-contracts/`](../examples/public-contracts/) | Shows example payloads                                 |
 | [`../patterns/`](../patterns/)                                   | Captures reusable workflow patterns found during implementation    |
 | [`../proof/`](../proof/)                                         | Documents runtime corrections and evidence from the working system |
 
@@ -75,6 +74,6 @@ This order moves from public contract behavior to deeper Make and Notion runtime
 
 ## Boundary
 
-This proof layer shows that Weft has been tested and corrected in a working personal workflow.
+This proof layer shows that Weft has been tested and corrected in my working workflow.
 
-It does not claim that Weft is a finished product, a SaaS platform or a generally deployable system. The value of this directory is narrower and more concrete: it shows how runtime issues were found, understood and fixed.
+It is intentionally narrow: it documents concrete runtime issues that were found, understood and fixed.

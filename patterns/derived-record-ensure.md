@@ -36,7 +36,7 @@ Derived records support the system. They should not automatically become the sou
 
 Derived records are often handled with implicit logic such as:
 
-```text id="n7u940"
+```text
 create if missing
 ```
 
@@ -74,7 +74,7 @@ This preserves relationship consistency and safer retry behavior.
 
 A typical implementation follows this flow:
 
-```text id="y3s3ru"
+```text
 ensure primary record exists
 ↓
 derive stable grouping key
@@ -90,7 +90,7 @@ link primary and derived records
 
 Routing:
 
-```text id="jcnry2"
+```text
 0 records → create derived record and link
 1 record  → reuse derived record and link
 2+ records → fail or resolve ambiguity

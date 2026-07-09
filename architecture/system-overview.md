@@ -1,7 +1,5 @@
 # System Overview
 
-## What this page is
-
 This page gives a short orientation to how Weft fits together before going into the detailed architecture documents.
 
 It does not repeat the full architecture.
@@ -69,5 +67,5 @@ Full flow description: [`archive-conversation-flow.md`](./archive-conversation-f
 * [`../case-studies/archive-conversation-system/`](../case-studies/archive-conversation-system/) — write-side case study
 * [`../contracts/payload-contract.md`](../contracts/payload-contract.md) — public workflow boundaries
 * [`../schemas/`](../schemas/) — public boundary validation
-* [`../examples/public-contracts/`](../examples/public-contracts/) — public-safe example payloads
+* [`../examples/public-contracts/`](../examples/public-contracts/) — example payloads
 * [`../proof/`](../proof/) — runtime evidence and debugging records

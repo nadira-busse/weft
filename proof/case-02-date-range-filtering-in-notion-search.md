@@ -4,7 +4,7 @@
 
 This case documents how date range filtering in the `search_archive` flow was corrected under Make + Notion execution behavior.
 
-The issue was not simply how to filter by date. The real problem was making date-bounded retrieval behave predictably when date inputs are optional and platform filter behavior is strict.
+The issue was not simply how to filter by date. The real problem was making date-bounded retrieval behave predictably when date inputs are optional and date filters are sensitive to operator choice, empty values and time boundaries.
 
 The correction had to account for:
 
@@ -100,8 +100,9 @@ ifempty(date_from; archive_baseline)
 
 ```text
 Start_time On or before:
-ifempty(date_to; fallback_upper_date) + explicit end-of-day suffix
+ifempty(date_to; fallback_upper_date) + explicit end-of-day timestamp
 ```
+The timestamp must use a consistent timezone, because Notion date-time comparisons are timezone-sensitive when time is included.
 
 This makes one-sided and same-day searches explicit instead of relying on implicit platform behavior.
 
@@ -156,4 +157,4 @@ and normalize the upper date boundary explicitly.
 
 The workflow was corrected so date-bounded search behaves as an explicit retrieval boundary, not as best-effort filtering. Weft depends on that boundary holding, since predictable search is part of what makes retrieval trustworthy.
 
-What this demonstrates: a real platform constraint, found and understood well enough to fix at the root instead of patching around it.
+This demonstrates that the issue was corrected at the query-boundary level instead of patched after retrieval.

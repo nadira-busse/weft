@@ -8,15 +8,6 @@ It turns selected AI interactions, workflow outputs and project decisions into s
 
 This part of the system focuses on reliable capture and persistence.
 
-It does not handle:
-
-* archive search
-* ranking
-* context reconstruction
-* knowledge promotion
-
-Those responsibilities belong to separate retrieval and context systems.
-
 ---
 
 ## Problem
@@ -46,7 +37,7 @@ The system must support:
 * explicit create/update behavior
 * relationship resolution before writing
 * retry-safe execution
-* public-safe confirmation after storage
+* clear write confirmation after storage
 
 A retry should not create a second record for the same logical interaction. It should converge on the same persisted archive state.
 
@@ -54,33 +45,17 @@ A retry should not create a second record for the same logical interaction. It s
 
 ## Scope
 
-This case study covers the archive write path only.
+This case study covers the archive write path only: receiving a structured archive request, normalizing the payload, resolving identifiers and relations, checking whether the archive record already exists, and writing the result to the archive system of record.
 
-Included:
+It does not cover what happens after storage, such as searching the archive, selecting relevant records for a future session, or using archived records to update project documentation.
 
-* archive invocation
-* payload normalization
-* identifier resolution
-* existence checks
-* create/update behavior
-* relation mapping
-* persistence into the archive system of record
-
-Excluded:
-
-* archive search
-* context retrieval
-* ranking
-* filtering
-* canonical knowledge promotion
-
-This separation keeps the write-side architecture focused and predictable.
+This keeps the case study focused on reliable capture and persistence.
 
 ---
 
 ## Architecture Boundary
 
-```text id="o5qx4c"
+```text
 AI Client / Workflow Client
 ↓
 Invocation Interface
@@ -96,6 +71,8 @@ Each layer has a distinct responsibility.
 
 The AI client can request archiving, but it does not own persistence.
 
+The invocation interface is the controlled entry point into the archive workflow.
+
 The orchestration layer controls workflow behavior.
 
 The data layer stores records and relations, but it does not decide workflow logic.
@@ -104,7 +81,7 @@ The data layer stores records and relations, but it does not decide workflow log
 
 ## Archive Write Flow
 
-```text id="2ws2pf"
+```text
 interaction or workflow output
 ↓
 archive request
@@ -122,16 +99,7 @@ create or update
 write confirmation
 ```
 
-The workflow is intentionally explicit.
-
-No write operation should occur before:
-
-* the payload is normalized
-* the archive identifier is resolved
-* related records are checked
-* the existence state is known
-
-This prevents ambiguous writes and uncontrolled duplicate creation.
+The write order is explicit so the workflow does not create or update records before the payload, identifiers, relations and existence state are known.
 
 ---
 
@@ -143,13 +111,13 @@ Before writing, the workflow checks whether a matching archive record already ex
 
 Routing is based on lookup cardinality:
 
-|    Lookup result | Behavior                           |
-| ---------------: | ---------------------------------- |
-|        0 records | Create a new archive record        |
-|         1 record | Update the existing archive record |
-| Multiple records | Fail or route to error handling    |
+| Lookup result | Behavior |
+| --- | --- |
+| 0 records | Create a new archive record |
+| 1 record | Update the existing archive record |
+| Multiple records | Treat as a data integrity error and stop the write path |
 
-This makes retries safer.
+When lookup is based on the stable archive identifier, multiple matches should not occur. If they do, the workflow treats this as a data integrity issue instead of choosing one record silently.
 
 A repeated archive request with the same stable identifier should target the same logical archive record instead of creating duplicates.
 
@@ -170,7 +138,6 @@ An archive record can be related to:
 * a project
 * a daily log
 * source metadata
-* workflow execution context
 
 Internal database structures, exact Notion properties, private identifiers and full record payloads are intentionally not published.
 
@@ -182,59 +149,39 @@ Public payload examples are documented in [`examples/public-contracts/`](../../e
 
 The archive write path was designed around real workflow failure conditions.
 
-| Failure mode                   | Risk                                                             | Mitigation                                                           |
-| ------------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Failure mode | Risk | Mitigation |
+| --- | --- | --- |
 | Retry-induced duplicate writes | A retry creates a second record for the same logical interaction | Resolve identifiers before writing and check existence before create |
-| Lookup misinterpretation       | A valid “not found” state is treated as an error                 | Separate validation from lookup and route zero results explicitly    |
-| Relation mapping errors        | Records are created without required or correct relations        | Resolve and validate relationship identifiers before writing         |
-| Partial execution              | A workflow stops before the archive operation is complete        | Preserve stable identifiers and make retry behavior converge         |
+| Lookup misinterpretation | A valid “not found” state is treated as an error | Separate validation from lookup and route zero results explicitly |
+| Relation mapping errors | Records are created without required or correct relations | Resolve and validate relationship identifiers before writing |
+| Partial execution | A workflow stops before the archive operation is complete | Reuse stable identifiers so retries target the same archive record |
 
 ---
 
 ## Patterns Applied
 
-This system applies reusable workflow architecture patterns:
-
-* Explicit Existence Check
-* Get-or-Create Upsert
-* Idempotent Archive Write
-* Derived Record Ensure
-* Relation Identifier Mapping
-* Validation Before Lookup
-* Immutable Field Guard
-
-See:
-
-See [`patterns/`](../../patterns/).
+The archive write path applies reusable workflow architecture patterns documented in [`patterns/`](../../patterns/), especially idempotent archive writes, explicit existence checks and relation identifier mapping.
 
 ---
 
 ## Trade-offs
 
-| Decision                        | Benefit                                | Cost                                        |
-| ------------------------------- | -------------------------------------- | ------------------------------------------- |
-| Archive-first persistence       | Stronger continuity and traceability   | More write operations and relation handling |
-| Deterministic write path        | More predictable workflow behavior     | More explicit routing logic                 |
-| Idempotent writes               | Safer retries and duplicate prevention | Requires stable identifier discipline       |
-| Existence-first routing         | Clear create/update behavior           | Additional lookup step before writing       |
-| Human-readable system of record | Easier inspection and debugging        | Not optimized for high-scale storage        |
-| Visual orchestration            | Fast iteration and visible debugging   | Less flexible than custom code              |
+| Decision | Benefit | Cost |
+| --- | --- | --- |
+| Archive-first persistence | Stronger continuity and traceability | More write operations and relation handling |
+| Deterministic write path | More predictable workflow behavior | More explicit routing logic |
+| Idempotent writes | Safer retries and duplicate prevention | Requires stable identifier discipline |
+| Existence-first routing | Clear create/update behavior | Additional lookup step before writing |
+| Human-readable system of record | Easier inspection and debugging | Not optimized for high-scale storage |
+| Visual orchestration | Fast iteration and visible debugging | Less flexible than custom code |
 
 ---
 
 ## Outcome
 
-The Archive Conversation System provides the write-side foundation for Weft.
+The archive write path gives Weft a reliable write-side foundation.
 
-It enables:
-
-* persistent archive records
-* retry-safe workflow execution
-* stable project-linked context
-* traceable AI-assisted work
-* later retrieval and context reconstruction
-
-The result is a system where selected AI interactions are no longer only temporary chat artifacts. They become structured records that can support continuity across sessions and tools.
+Selected AI-assisted work is no longer left only in temporary chats. It becomes a structured archive record with a stable identifier, explicit relations and predictable create/update behavior.
 
 ---
 

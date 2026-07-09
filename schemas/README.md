@@ -1,10 +1,8 @@
 # Schemas
 
-This directory contains the public JSON schemas for Weft payload boundaries.
+This directory contains JSON schemas for the documented Weft payload boundaries.
 
-Schemas define the minimum machine-checkable structure for public request and response contracts.
-
-They are not a full publication of the internal Weft data model.
+Schemas define the minimum machine-checkable structure for request and response contracts.
 
 ---
 
@@ -17,23 +15,16 @@ They help ensure that:
 * required fields are present
 * field types are predictable
 * workflow inputs and outputs remain structurally consistent
-* public examples remain aligned with documented contracts
-* implementation details stay separated from public contract boundaries
+* examples remain aligned with documented contracts
+* contract validation stays separate from implementation details
 
 ---
 
 ## Boundary Rule
 
-The schemas describe public workflow boundaries only.
+The schemas describe workflow contract boundaries only.
 
-They intentionally do not expose:
-
-* private Notion database structures
-* Make module mappings
-* internal relation-property names
-* private IDs or URLs
-* full raw archive payloads
-* complete production storage records
+They do not describe the full internal data model, Make scenario mappings or Notion database structure.
 
 ---
 
@@ -41,9 +32,9 @@ They intentionally do not expose:
 
 | Schema                                                                                                     | Purpose                                                   |
 | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| [`archive/conversation-archive-request.schema.json`](./archive/conversation-archive-request.schema.json)   | Public request boundary for `archive_conversation`        |
-| [`archive/conversation-archive-response.schema.json`](./archive/conversation-archive-response.schema.json) | Public response boundary for `archive_conversation`       |
-| [`archive/message.schema.json`](./archive/message.schema.json)                                             | Public message item structure used by the archive request |
+| [`archive/conversation-archive-request.schema.json`](./archive/conversation-archive-request.schema.json)   | Request boundary for `archive_conversation`        |
+| [`archive/conversation-archive-response.schema.json`](./archive/conversation-archive-response.schema.json) | Response boundary for `archive_conversation`       |
+| [`archive/message.schema.json`](./archive/message.schema.json)                                             | Message item structure used by the archive request |
 
 ---
 
@@ -51,8 +42,8 @@ They intentionally do not expose:
 
 | Schema                                                                                       | Purpose                                     |
 | -------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| [`search/search-archive-request.schema.json`](./search/search-archive-request.schema.json)   | Public input boundary for `search_archive`  |
-| [`search/search-archive-response.schema.json`](./search/search-archive-response.schema.json) | Public output boundary for `search_archive` |
+| [`search/search-archive-request.schema.json`](./search/search-archive-request.schema.json)   | Input boundary for `search_archive`  |
+| [`search/search-archive-response.schema.json`](./search/search-archive-response.schema.json) | Output boundary for `search_archive` |
 
 ---
 
@@ -61,7 +52,7 @@ They intentionally do not expose:
 | Schema                                                                                   | Purpose                                  |
 | ---------------------------------------------------------------------------------------- | ---------------------------------------- |
 | [`context/get-context-request.schema.json`](./context/get-context-request.schema.json)   | Public input boundary for `get_context`  |
-| [`context/get-context-response.schema.json`](./context/get-context-response.schema.json) | Public output boundary for `get_context` |
+| [`context/get-context-response.schema.json`](./context/get-context-response.schema.json) | Output boundary for `get_context` |
 
 ---
 

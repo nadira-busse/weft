@@ -55,6 +55,6 @@ Shows that workflow errors are logged for observability and debugging. Private e
 
 ## Boundary
 
-These screenshots support the claim that Weft is a working system in the author’s own workflow.
+These screenshots support that Weft is a working system in my own workflow.
 
 They do not claim that Weft is a finished product, a SaaS platform or a generally deployable system.

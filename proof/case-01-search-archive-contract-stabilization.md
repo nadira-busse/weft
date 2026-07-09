@@ -2,7 +2,7 @@
 
 ## Context
 
-This case documents how the `search_archive` flow was corrected from unstable Make + Notion output into a stable public search contract.
+This case documents how the `search_archive` flow was corrected from unstable Make + Notion output into a stable search response contract.
 
 The issue was not that search itself failed. The deeper problem was that the workflow exposed internal runtime shape instead of returning one explicit response shape.
 
@@ -47,7 +47,7 @@ The fix was:
 Target structure = Return Output contract
 ```
 
-This aligned aggregation with the final public response shape.
+This aligned aggregation with the final response shape.
 
 ---
 
@@ -62,7 +62,7 @@ Search Objects
 → Return Output
 ```
 
-The public candidate shape was constrained to:
+The candidate response shape was constrained to:
 
 ```json
 {
@@ -80,7 +80,6 @@ This keeps search output:
 * compact
 * bounded
 * stable
-* public-safe
 * independent from raw Notion internals
 
 ---
@@ -184,6 +183,6 @@ and return only the approved public structure.
 
 This case proves that Weft’s search output is not just whatever Make or Notion returns by default.
 
-The workflow now applies an explicit projection layer before returning data. That protects the public contract, keeps search output bounded, and prevents internal storage structures from leaking into downstream use.
+The workflow now applies an explicit projection layer before returning data. That keeps search output bounded, predictable and aligned with the response contract.
 
 I couldn't have written this case without actually running into it — the bug was in an Aggregator setting I only spotted once I lined up the runs side by side.

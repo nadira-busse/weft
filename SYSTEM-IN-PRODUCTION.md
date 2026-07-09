@@ -4,7 +4,7 @@ This document explains which parts of Weft are actually running in my own workfl
 
 Weft is not only an architecture idea. It is based on a real Make + Notion system that I use for AI-assisted project work.
 
-The public repository does not contain the full private implementation. It documents the architecture, contracts, public-safe examples, proof cases and screenshots that show how the system works.
+The public repository does not contain the full private implementation. It documents the architecture, contracts, examples, proof cases and screenshots that show how the system works.
 
 ---
 
@@ -105,8 +105,8 @@ Published:
 
 * workflow descriptions
 * request and response contracts
-* JSON schemas for public payload boundaries
-* public-safe example payloads
+* JSON schemas for payload boundaries
+* example payloads
 * reusable workflow patterns
 * runtime proof cases
 * screenshots with sensitive details omitted
@@ -122,4 +122,4 @@ Not published:
 * private archive content
 * full MCP configuration
 
-This keeps the repository useful for portfolio review while protecting the private system behind it.
+

@@ -35,7 +35,7 @@ Common scenarios include:
 
 ## Cause
 
-Many systems do not provide a native upsert operation.
+In the Weft implementation, create and update behavior is handled explicitly instead of relying on a native upsert operation.
 
 As a result, workflows must explicitly:
 
@@ -76,7 +76,7 @@ This creates a single-record guarantee for the deterministic key.
 
 A typical implementation follows this flow:
 
-```text id="brb5h3"
+```text
 derive deterministic key
 ↓
 lookup by key
@@ -139,7 +139,7 @@ Without this pattern, systems commonly produce:
 
 In systems such as Make + Notion:
 
-* native upsert operations may not exist
+* native upsert behavior is not assumed
 * lookup results must be handled explicitly
 * execution may retry or partially fail
 * stable identifiers are needed to prevent duplication

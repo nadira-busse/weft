@@ -48,8 +48,8 @@ Common causes include:
 
 In systems such as Notion:
 
-* relations require page-level identifiers
-* database IDs or other container identifiers are not accepted as relation targets
+* relation values must reference the target page records
+* database or data-source identifiers are not the same as relation target identifiers
 
 ---
 
@@ -73,7 +73,7 @@ Identifiers must not be inferred, transformed or manually constructed.
 
 A typical implementation follows this flow:
 
-```text id="t02lvi"
+```text
 retrieve or create target record
 ↓
 extract system-generated record ID

@@ -57,7 +57,7 @@ This is a bundling problem, not a search problem.
 
 The failing shape was:
 
-```text id="sp9b81"
+```text
 Search
 → per-result mapping
 → Return Output
@@ -76,7 +76,7 @@ What happens:
 
 The corrected flow is:
 
-```text id="lw0w34"
+```text
 Search
 → per-result mapping
 → Array Aggregator
@@ -92,7 +92,7 @@ The Array Aggregator:
 
 That matches the public contract expectation:
 
-```text id="w6ydex"
+```text
 many records found
 → one response
 → one explicit results array
@@ -123,7 +123,7 @@ many records found
 
 ## Minimal Detection Rule
 
-```text id="eqzrzk"
+```text
 If Search shows multiple bundles in run history
 but the final response contains one result,
 final aggregation is missing.
@@ -131,11 +131,11 @@ final aggregation is missing.
 
 ---
 
-## Public Contract Expectation
+## Response Contract Expectation
 
 For a successful multi-result search:
 
-```text id="cp4vpa"
+```text
 results_count = N
 results.length = N
 ```
@@ -146,7 +146,7 @@ The response must not silently drop valid search candidates.
 
 ## Reusable Pattern
 
-```text id="v29xip"
+```text
 Whenever a Make scenario must return multiple records,
 aggregate explicitly before Return Output.
 
@@ -163,6 +163,6 @@ What this case is evidence of:
 * separation between per-bundle mapping and final response construction
 * explicit control over multi-result output
 * prevention of silent data loss in retrieval
-* contract-level assembly before returning public output
+* contract-level assembly before returning the response
 
 The reason this is worth documenting: the failure is easy to miss. The workflow can look correct while quietly returning incomplete results.

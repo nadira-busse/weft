@@ -4,11 +4,7 @@
 
 The Context Continuity System describes the retrieval side of Weft.
 
-It exists because AI-assisted work often spans:
-
-- multiple sessions
-- multiple tools
-- multiple models
+It exists because AI-assisted work often continues across sessions, AI clients and workflow tools.
 
 Without external persistence, context becomes fragmented and has to be reconstructed manually.
 
@@ -18,19 +14,19 @@ Weft addresses this by storing selected context in a structured archive and retr
 
 ## Problem
 
-Large language models are stateless at the model level.
+Modern AI clients increasingly include memory and chat-history features.
 
-Built-in memory features can be useful, but they are not a controlled system of record. They may be limited, inconsistent or hard to inspect.
+Those features can be useful, but they do not always return the exact context needed for continued project work. They can miss relevant details, surface the wrong prior context, or make it difficult to inspect why a specific memory was used.
 
-This leads to:
+For multi-session work, this can still lead to:
 
-- repeated explanation of context
-- fragmented reasoning
-- disconnected decisions
-- loss of traceability
-- weak continuity between sessions
+- repeating context that was already discussed
+- reconnecting decisions manually
+- searching through earlier conversations
+- uncertainty about which version of the context is current
+- weaker continuity between sessions, tools or AI clients
 
-For multi-session work, context needs to live outside the chat itself.
+Weft addresses this by keeping selected context in a structured archive that can be searched and retrieved explicitly.
 
 ---
 
@@ -54,32 +50,18 @@ The goal is to make important context available again when the user needs to con
 
 ## Scope
 
-This case study covers the retrieval side of Weft.
+This case study covers the retrieval side of Weft: finding archived records and returning stored context in a structured response so work can continue in an AI client.
 
-Included:
+The archive write path is covered in the Archive Conversation System case study.
 
-- archive discovery
-- archive search
-- context retrieval
-- response shaping
-- explicit handling of lookup results
-
-Excluded:
-
-- archive write behavior
-- semantic search
-- automatic context synthesis
-- multi-record context composition
-- canonical knowledge promotion
-
-Those excluded areas are documented as current limitations or future hardening opportunities.
+This keeps the document focused on retrieval, not on every possible future memory feature.
 
 ---
 
 ## System Boundary
 
-```text id="xbd0or"
-AI Client
+```text
+AI Client requests context
 ↓
 Invocation Interface
 ↓
@@ -88,13 +70,23 @@ Orchestration Layer
 Context Layer
 ↓
 Data Layer
-````
+↓
+Structured context response
+↓
+AI Client continues work
+```
 
 The AI client can request context, but it does not own the archive state.
 
-The workflow layer controls search and retrieval behavior.
+The invocation interface defines the controlled request boundary into Weft.
 
-The data layer stores the archive records and retrieved content.
+The orchestration layer controls the retrieval workflow.
+
+The context layer shapes retrieved archive content into a usable response.
+
+The data layer provides access to stored archive records.
+
+The structured response goes back to the AI client so the user can continue the work.
 
 ---
 
@@ -106,7 +98,7 @@ Context continuity is enabled through two operations.
 
 Used when the correct archive record is not yet known.
 
-```text id="xrluhk"
+```text
 query → archive search → matching records
 ```
 
@@ -116,7 +108,7 @@ Discovery returns candidate records. It does not reconstruct the full context.
 
 Used when the target record or search boundary is known.
 
-```text id="u1jz9h"
+```text
 identifier or bounded query → context retrieval → ordered clean_text blocks
 ```
 
@@ -128,14 +120,13 @@ Retrieval returns stored archive content in a structured response shape.
 
 The retrieval side follows these rules:
 
-* retrieval should not modify stored records
-* lookup outcomes must be handled explicitly
-* zero, one and multiple results are different states
-* public responses must not expose raw Notion internals
-* retrieved text should follow the stored archive structure
-* AI clients receive context, but do not become the source of truth
+- retrieval should not modify stored records
+- lookup outcomes must be handled explicitly
+- zero, one and multiple results are valid retrieval states
+- retrieved text should follow the stored archive structure
+- AI clients receive context, but do not become the source of truth
 
-Any non-determinism belongs in the archived content or generated metadata, not in the retrieval boundary itself.
+The retrieval workflow should not guess beyond the search boundary. If a query returns multiple records, the response should make that visible instead of silently treating one result as the only relevant context.
 
 ---
 
@@ -143,7 +134,7 @@ Any non-determinism belongs in the archived content or generated metadata, not i
 
 Context continuity depends on prior archive operations.
 
-```text id="9x4h1z"
+```text
 interaction
 → archive
 → storage
@@ -175,15 +166,11 @@ It is a controlled archive-and-retrieval layer that makes important context avai
 
 Weft currently retrieves archived content through defined workflows.
 
-It does not yet provide:
+The retrieval side returns stored context so the user can continue work in an AI client.
 
-* semantic retrieval
-* automatic cross-record synthesis
-* autonomous memory management
-* global context composition
-* full knowledge promotion
+It does not automatically decide which records should be combined, summarized or promoted into project documentation. Those steps remain explicit user-controlled workflows.
 
-That boundary matters. The current system is useful because it makes context retrievable, not because it solves every form of AI memory.
+This boundary is intentional: Weft focuses first on reliable archive retrieval before adding more autonomous memory behavior.
 
 ---
 

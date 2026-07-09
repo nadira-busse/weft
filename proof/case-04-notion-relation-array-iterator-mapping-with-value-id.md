@@ -31,7 +31,7 @@ Two failures appeared while iterating over a Notion relation property and retrie
 
 A Notion Get step received an invalid page identifier and raised an error equivalent to:
 
-```text id="lqzd3b"
+```text
 path.page_id should be a valid uuid, instead was {"value":"..."}
 ```
 
@@ -49,7 +49,7 @@ A Notion relation property is not an array of UUID strings.
 
 It is an array of objects:
 
-```json id="8reqhj"
+```json
 [
   { "id": "00000000-0000-0000-0000-000000000001" },
   { "id": "00000000-0000-0000-0000-000000000002" }
@@ -64,27 +64,29 @@ The full relation array must be passed into the Iterator.
 
 Use:
 
-```text id="j1didt"
+```text
 relation_field[]
 ```
 
-Without array notation, Make may pass only the first relation entry.
+Without passing the full array into the Iterator, the scenario did not process every related record.
 
 ### Inside the Iterator
 
 The current item is already one relation object.
 
+In this workflow, Make exposed the current relation object as `N.value`, so the page ID had to be mapped as `N.value.id`.
+
 Use:
 
-```text id="8me4gq"
+```text
 N.value.id
 ```
 
-This extracts the UUID string expected by Notion.
+This extracts the page ID string required by the Notion Get step.
 
 Do not use:
 
-```text id="ctt83h"
+```text
 N.value
 ```
 
@@ -94,7 +96,7 @@ as a Page ID when the current item is a relation object. That passes the whole o
 
 ## Correct Implementation Pattern
 
-```text id="5i3ylu"
+```text
 Iterator input:
 relation_field[]
 
@@ -147,10 +149,10 @@ For a relation field with multiple related records, the workflow must satisfy:
 
 ## Reusable Pattern
 
-```text id="x4t3ql"
+```text
 When iterating over a Notion relation field in Make,
 pass the full relation array into the Iterator,
-and inside the Iterator access the UUID via .value.id.
+then map the page ID from the current relation object.
 ```
 
 ---

@@ -4,13 +4,7 @@
 
 This document defines the current boundaries of the Weft system.
 
-These limitations describe:
-
-* behavior not implemented
-* constraints intentionally accepted in the MVP stage
-* capabilities explicitly out of scope for the public repository
-
-They are not failures.
+The limitations describe unimplemented behavior, MVP-stage constraints and capabilities outside the current repository scope.
 
 They define where the current system stops.
 
@@ -23,9 +17,10 @@ Weft currently demonstrates:
 * archive-first workflow behavior
 * structured archive, search and context retrieval flows
 * explicit payload contracts
-* public boundary schemas
+* payload boundary schemas
 * deterministic routing and response-shaping behavior
 * identity-based archive persistence
+* immutable field guards for protected archive context
 * retrieval from persisted archive records
 * runtime proof from a working Make + Notion implementation
 * MCP-enabled invocation from AI clients
@@ -34,11 +29,15 @@ The repository documents a working system, not a packaged deployable product.
 
 ---
 
-## 1. No Change-Aware Persistence
+## Limitations
 
-The system uses stable identifiers and prevents duplicate archive records under the current write model.
+### 1. No Change-Aware Persistence
 
-This is separate from change-aware persistence. Idempotency prevents duplicate records for the same identity. It does not automatically detect unchanged content or skip unnecessary updates.
+The system uses stable identifiers to prevent duplicate archive records under the current write model.
+
+It also guards immutable context fields, such as project ownership, so an existing archive record is not silently reassigned to a different project.
+
+This is separate from change-aware persistence. Idempotency and immutable field guards protect record identity and ownership. They do not automatically detect unchanged content or skip unnecessary updates.
 
 Missing control layers:
 
@@ -49,63 +48,34 @@ Missing control layers:
 
 Current behavior:
 
-```text id="79cf2w"
+```text
 same identity
 → valid repeated input
+→ immutable fields checked
 → same target record
-→ update path
+→ create, update or controlled conflict path
 ```
 
-The system guarantees stable identity and no duplicate creation.
+The system guarantees stable identity and controlled conflict handling for guarded fields.
 
 It does not yet distinguish between:
 
-```text id="2f5ok8"
+```text
 same identity + same content
 same identity + modified content
 ```
 
 Current boundary:
 
-```text id="1rk7ci"
+```text
 stable identity is enforced
+guarded context fields are protected
 change-aware persistence is not yet enforced
 ```
 
 ---
 
-## 2. No Versioned Persistence
-
-Archive updates currently preserve current state, not historical state history.
-
-Missing:
-
-* version history per archive record
-* snapshot-based overwrite tracking
-* versioned content storage
-
-Current behavior:
-
-```text id="a2ywsw"
-update → current record state changes
-```
-
-Impact:
-
-* prior content states are not preserved as separate versions
-* no full audit trail of content evolution
-* overwrite transparency is limited
-
-Current boundary:
-
-```text id="r6i2is"
-current state is preserved
-state history is not yet versioned
-```
-
----
-
-## 3. Flow-Bound Validation
+### 2. Flow-Bound Validation
 
 Weft uses explicit schemas and payload contracts.
 
@@ -114,7 +84,7 @@ Validation is currently applied at the workflow boundary, not through a standalo
 Current behavior:
 
 * contracts are documented
-* schemas define public payload boundaries
+* schemas define payload boundaries
 * validation is handled per flow
 
 Not implemented:
@@ -125,18 +95,18 @@ Not implemented:
 
 Current boundary:
 
-```text id="hjdr0z"
+```text 
 contracts exist
 validation is flow-bound
 ```
 
 ---
 
-## 4. Deterministic Search, Not Semantic Search
+### 3. Deterministic Search, Not Semantic Search
 
 Search is currently based on explicit filters and constrained lookup behavior.
 
-Supported public search patterns include:
+Supported search patterns include:
 
 * conversation ID
 * project
@@ -153,7 +123,7 @@ Not implemented:
 
 Impact:
 
-```text id="mpeh92"
+```text 
 no implicit recall
 ```
 
@@ -161,42 +131,31 @@ Users must provide explicit search input.
 
 Current boundary:
 
-```text id="fz5zb4"
+```text
 search is deterministic selection
 not semantic interpretation
 ```
 
 ---
 
-## 5. Limited Context Composition
+### 4. Limited Context Composition
 
 `get_context` retrieves archived context from persisted records.
 
-The current public example reflects Notion block-based retrieval using `clean_text` blocks.
+The current flow returns retrieved archive content in its stored block-based structure, using `clean_text` blocks.
 
-Not implemented:
-
-* multi-record aggregation
-* cross-record synthesis
-* automatic context merging
-* semantic context composition
-
-Impact:
-
-```text id="3r53xz"
-no automatic cross-session context assembly
-```
+It does not automatically build a full working context from multiple archive records.
 
 Current boundary:
 
-```text id="zk59sp"
-retrieval returns archived context blocks
-composition is not yet a separate system layer
+```text
+retrieval returns stored archive context
+automatic context composition is not yet a separate system capability
 ```
 
 ---
 
-## 6. Non-Deterministic Metadata Is Contained
+### 5. Non-Deterministic Metadata Is Contained
 
 Some metadata fields may be generated or derived, such as:
 
@@ -209,60 +168,30 @@ These fields may vary across executions if generated by AI.
 
 Constraint:
 
-```text id="2t2ii5"
-derived metadata does not control identity or archive truth
+```text 
+derived metadata does not control identity or the source archive record
 ```
 
 The archive source remains the primary record.
 
 Current boundary:
 
-```text id="oqidx5"
+```text 
 non-determinism is contained
 not eliminated
 ```
 
 ---
 
-## 7. No Public Runtime Deployment
-
-The repository documents the architecture, contracts, examples, screenshots and proof of the working system.
-
-It does not provide:
-
-* deployable Make blueprints
-* public Notion workspace
-* runnable hosted environment
-* public execution endpoint
-* complete private implementation configuration
-
-Impact:
-
-```text id="qpe7kt"
-the repo proves design and implementation evidence
-not third-party deployment
-```
-
-Current boundary:
-
-```text id="e80zjv"
-public documentation exists
-public runtime artifact does not
-```
-
----
-
 ## Summary
 
-Weft currently documents and applies deterministic workflow behavior within its implemented archive, search and retrieval flows.
+Weft currently documents and applies predictable workflow behavior within its archive, search and retrieval flows.
 
-It does not yet provide:
+The current boundary excludes:
 
 * change-aware persistence
-* versioned state history
 * semantic retrieval
 * global validation services
 * automated multi-record context composition
-* public third-party deployment
 
-This is an MVP-stage boundary, not a system failure.
+This is an MVP-stage boundary.

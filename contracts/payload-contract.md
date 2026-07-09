@@ -18,29 +18,25 @@ orchestration behavior
 storage implementation
 ```
 
-The purpose is to make workflow behavior easier to inspect, validate and correct without exposing the private Make or Notion implementation.
+The purpose is to make workflow behavior easier to inspect, validate and correct.
 
 Machine-checkable validation rules are documented in [`../schemas/`](../schemas/).
-Public-safe example payloads are documented in [`../examples/public-contracts/`](../examples/public-contracts/).
+Example payloads are documented in [`../examples/public-contracts/`](../examples/public-contracts/).
 
 ---
 
-## Scope
+## Public Boundary
 
-This contract describes the public boundary of Weft workflows.
+This repository documents the workflow boundary, not the full internal implementation.
 
-It does not publish:
+It shows:
 
-* private Notion database structures
-* Make scenario internals
-* internal relation-property names
-* private IDs or URLs
-* private raw archive content
-* complete production variants
+* request and response shapes
+* validation expectations
+* example payloads
+* workflow behavior at the contract level
 
-The public contract is intentionally smaller than the internal implementation.
-
-Public examples may include intentionally public project content when that content helps show workflow behavior.
+It does not publish private archive content, internal IDs, URLs, database structures or Make scenario internals.
 
 ---
 
@@ -58,7 +54,7 @@ Each contract has:
 
 * a conceptual description in this document
 * request and/or response schemas in [`../schemas/`](../schemas/)
-* public-safe examples in [`../examples/public-contracts/`](../examples/public-contracts/)
+* examples in [`../examples/public-contracts/`](../examples/public-contracts/)
 
 Request and response contracts are documented separately where needed. A request describes what the workflow accepts. A response describes what the workflow returns.
 
@@ -94,16 +90,14 @@ A public archive request can include:
 * extraction type
 * start and end timestamps
 * message count
-* ordered messages
+* message order preservation
 * optional source metadata
 
 The stable identifier is the primary idempotency key.
 
 This allows retries or repeated workflow calls to converge on the same logical archive record when the workflow uses an existence-first write model.
 
-The public archive response confirms what happened after the archive request was accepted and stored. It does not repeat the full archived content.
-
-Private implementation details are intentionally omitted.
+The archive response confirms what happened after the archive request was accepted and stored. It does not repeat the full archived content.
 
 ---
 
@@ -123,9 +117,7 @@ When `date_from` and `date_to` are equal, the workflow treats the request as an 
 
 The workflow rejects date-range requests where `date_from` is later than `date_to`.
 
-Search outputs return public-safe record summaries, not full private archive records.
-
-This keeps the contract useful without exposing internal storage details.
+Search outputs return record summaries, not full archive content.
 
 ---
 
@@ -151,7 +143,7 @@ The response follows the working system shape: retrieved Notion page text is ret
 
 This block-based response shape is intentional. Weft stores long archive content across Notion page blocks because Notion property text storage is limited. The `get_context` workflow reconstructs those stored blocks so longer archived content can still be retrieved later.
 
-Long public content may be shortened in examples for readability. Private content, internal IDs, URLs and implementation details are not published.
+Example content may be shortened for readability.
 
 ---
 
@@ -163,7 +155,7 @@ For archive workflows, this depends on:
 
 * stable identifiers
 * required fields
-* ordered messages
+* message order preservation
 * existence-first checks
 * controlled create/update behavior
 
@@ -176,22 +168,6 @@ For retrieval workflows, this depends on:
 This does not mean every internal platform behavior is controlled by the contract.
 
 The contract defines the public boundary. Make and Notion still have their own platform constraints.
-
----
-
-## Public vs Internal Contract
-
-The public contract is not the full internal implementation model.
-
-| Layer                            | Publicly documented? | Reason                      |
-| -------------------------------- | -------------------: | --------------------------- |
-| Public request/response boundary |                  Yes | Shows interface discipline  |
-| JSON schemas                     |                  Yes | Shows validation discipline |
-| Public-safe examples             |                  Yes | Shows practical behavior    |
-| Internal Notion properties       |                   No | Implementation detail       |
-| Make module mappings             |                   No | Tool-specific detail        |
-| Private raw archive content      |                   No | Privacy and scope control   |
-| Private IDs and URLs             |                   No | Security and privacy        |
 
 ---
 

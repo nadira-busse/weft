@@ -20,10 +20,11 @@
 <text class="ts" x="340" y="50" text-anchor="middle">Archive-First Architecture for Deterministic AI Workflows</text>
 
 <!-- Box 1: AI Clients -->
-<rect x="100" y="80" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<rect x="100" y="80" width="480" height="100" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
 <text class="th" x="340" y="105" text-anchor="middle" dominant-baseline="central">AI Clients</text>
 <text class="ts" x="340" y="127" text-anchor="middle" dominant-baseline="central">ChatGPT, Claude, etc.</text>
-<text class="ts" x="340" y="145" text-anchor="middle" dominant-baseline="central">Stateless interaction (no persistent memory)</text>
+<text class="ts" x="340" y="145" text-anchor="middle" dominant-baseline="central">Reasoning and interaction</text>
+<text class="ts" x="340" y="163" text-anchor="middle" dominant-baseline="central">No authoritative system state</text>
 
 <!-- Arrow 1 -->
 <line x1="340" y1="160" x2="340" y2="200" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>

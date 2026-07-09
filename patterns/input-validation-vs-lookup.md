@@ -44,7 +44,7 @@ A required input value is missing or undefined.
 
 Example:
 
-```text id="vp42v8"
+```text
 project = ""
 ```
 
@@ -58,7 +58,7 @@ A lookup executes successfully but returns no matching records.
 
 Example:
 
-```text id="4l3uxw"
+```text
 lookup → 0 results
 ```
 
@@ -87,7 +87,7 @@ Each state requires different handling.
 
 Separate the workflow into two ordered stages:
 
-```text id="si1gno"
+```text
 1. Input validation
 2. Record lookup
 ```
@@ -108,7 +108,7 @@ Validation and lookup must never be combined into one decision point.
 
 A typical implementation follows this flow:
 
-```text id="s779g5"
+```text
 validate required input
 ↓
 if invalid → fail early
@@ -120,7 +120,7 @@ route by lookup cardinality
 
 Lookup routing:
 
-```text id="2e0mj8"
+```text
 0 records → create or handle absence explicitly
 1 record  → reuse validated record
 2+ records → fail or resolve ambiguity

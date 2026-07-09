@@ -1,8 +1,8 @@
 # Public Contract Examples
 
-This directory contains public-safe request and response examples for the Weft workflow boundaries.
+This directory contains request and response examples for the documented Weft workflow boundaries.
 
-The examples show the external payload shapes used by the public documentation. They do not expose private Notion IDs, internal URLs, full database structures, Make module mappings or sensitive runtime data.
+The examples show the payload shapes used by the archive, search and get-context workflows.
 
 ---
 
@@ -20,22 +20,24 @@ The examples show the external payload shapes used by the public documentation. 
 
 The `get-context` response reflects block-based retrieval from the archive context layer.
 
-Notion limits each text block to 2000 characters. The example response reconstructs a record with:
+Notion limits rich-text `text.content` values to 2000 characters.
+
+The example response reconstructs a record with:
 
 ```text
 Content length: 3673 characters
 ```
 
-That is more than one block's worth of content.
+That is more than one Notion rich-text value can hold.
 
-The system aggregates across multiple stored blocks and returns the retrieved content as a continuous response field. It is not reconstructed from short metadata fields or generated summaries.
+The system retrieves text from multiple stored blocks and returns it in the defined get_context response shape. It is not reconstructed from short metadata fields or generated summaries.
 
-Long public example content may be shortened in this repository for readability, while preserving the actual public response shape.
+Example content may be shortened for readability while preserving the response structure.
 
 ---
 
 ## Boundary
 
-These examples represent public workflow contracts.
+These examples document workflow contract shapes.
 
-They are not complete private runtime payloads and they are not deployable Make scenario exports.
+They are not complete runtime payloads, internal database exports or deployable Make scenario exports.

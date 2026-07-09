@@ -76,7 +76,7 @@ Validation must happen before any write operation is executed.
 
 A typical implementation follows this flow:
 
-```text id="nyafwi"
+```text
 resolve target record
 ↓
 retrieve current record state

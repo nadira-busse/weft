@@ -1,8 +1,8 @@
 # Status
 
-This directory documents the current public boundaries of the Weft system.
+This directory documents the current status and boundaries of the Weft system.
 
-Weft is shared as a working MVP-stage architecture project. The status documents clarify what the system currently demonstrates, what is intentionally out of scope, and what would need further hardening before broader use.
+Weft is a working MVP-stage architecture project. The status documents clarify what the system demonstrates now, what is out of scope, and what would need further hardening before broader use.
 
 ---
 
@@ -16,7 +16,7 @@ Weft is shared as a working MVP-stage architecture project. The status documents
 
 ## Status Principle
 
-Limitations are documented to avoid overclaiming.
+Limitations define the current system boundary.
 
 They do not mean the system is broken. They define the current boundary between:
 

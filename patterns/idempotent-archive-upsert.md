@@ -83,7 +83,7 @@ This makes repeated executions converge on one archive record.
 
 A typical implementation follows this flow:
 
-```text id="aqcxd2"
+```text
 resolve stable event identifier
 ↓
 lookup archive record by identifier

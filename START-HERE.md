@@ -31,7 +31,7 @@ Add:
 
 3. [`architecture/system-overview.md`](./architecture/system-overview.md) — how the system works
 4. [`architecture/archive-conversation-flow.md`](./architecture/archive-conversation-flow.md) — the core archive flow
-5. [`assets/screenshots/README.md`](./assets/screenshots/README.md) — public-safe runtime screenshots
+5. [`assets/screenshots/README.md`](./assets/screenshots/README.md) — runtime screenshots
 6. [`patterns/README.md`](./patterns/README.md) — reusable workflow patterns from the implementation
 
 ---
