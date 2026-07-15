@@ -18,7 +18,7 @@ interaction → archive_conversation → archive record → retrieval on request
 
 The AI client is not the memory layer.
 
-The archive is the source of record.
+The archive is the system of record.
 
 See: [`../case-studies/archive-conversation-system/`](../case-studies/archive-conversation-system/)
 

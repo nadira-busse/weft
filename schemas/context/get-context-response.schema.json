@@ -2,7 +2,7 @@
 "$schema": "https://json-schema.org/draft/2020-12/schema",
 "$id": "schemas/context/get-context-response.schema.json",
 "title": "Get Context Response",
-"description": "Public response schema for get_context. This schema follows the actual public response shape returned by the workflow: a list of retrieved text blocks from the archive context layer.",
+"description": "Response schema for get_context, returning retrieved archive text as ordered blocks.",
 "type": "object",
 "additionalProperties": false,
 "required": [
@@ -24,7 +24,7 @@
 },
 "results": {
 "type": "array",
-"description": "Retrieved archive context blocks. Public examples may truncate long content for readability while preserving the actual response shape.",
+"description": "Ordered text blocks retrieved from archived content.",
 "items": {
 "type": "object",
 "additionalProperties": false,

@@ -19,34 +19,17 @@ For the general project overview, start with [`../README.md`](../README.md).
 
 ---
 
-## Scope
-
-These documents describe the architectural model and public workflow boundaries of Weft.
-
-They do not publish:
-
-* private Make scenario mappings
-* Make module configuration
-* private Notion database schemas
-* internal Notion IDs
-* runtime payload instances
-* sensitive archive content
-
-The goal is to make the architecture understandable without exposing the private system behind it.
-
----
-
 ## Reading Order
 
 Recommended order:
 
-1. [`layer-model.md`](./layer-model.md)
-2. [`design-principles.md`](./design-principles.md)
-3. [`archive-conversation-flow.md`](./archive-conversation-flow.md)
+1. [`system-overview.md`](./system-overview.md)
+2. [`layer-model.md`](./layer-model.md)
+3. [`design-principles.md`](./design-principles.md)
+4. [`archive-conversation-flow.md`](./archive-conversation-flow.md)
 
 Related sections:
 
-* [`system-overview.md`](./system-overview.md)
 * [`../contracts/`](../contracts/)
 * [`../schemas/`](../schemas/)
 * [`../patterns/`](../patterns/)

@@ -15,11 +15,9 @@ The correction required understanding the runtime shape of Notion relation prope
 
 ## Why This Case Matters
 
-Relation traversal often supports downstream reconstruction, grouping or linked-record retrieval.
+Incorrect relation mapping can cause invalid Page ID errors or incomplete traversal of related records.
 
-If relation arrays are mapped incorrectly, the workflow may fail with invalid ID errors or silently retrieve only one related record.
-
-That matters for Weft because retrieval depends on complete and predictable traversal of stored context.
+For Weft, that affects project links, daily-log links and any workflow that needs to follow Notion relations reliably.
 
 ---
 
@@ -157,16 +155,8 @@ then map the page ID from the current relation object.
 
 ---
 
-## What This Proves
+## Evidence
 
-What this confirms: Weft's retrieval behavior is grounded in how the data actually looks at runtime, not in how it's assumed to look.
+This case shows that relation traversal was corrected from the actual runtime data shape.
 
-It shows:
-
-* correct interpretation of Notion relation properties
-* correct use of Make Iterator mechanics
-* explicit treatment of object arrays versus string arrays
-* correction of incomplete iteration
-* correction of invalid Page ID mapping
-
-Relation traversal can fail in ways that are hard to notice. This case is worth documenting because the failure was traced back to its real cause — the actual shape of the data — and fixed there, instead of being patched around.
+The fix addressed both incomplete iteration and invalid Page ID mapping at the source of the problem.

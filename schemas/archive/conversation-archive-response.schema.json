@@ -2,7 +2,7 @@
 "$schema": "https://json-schema.org/draft/2020-12/schema",
 "$id": "schemas/archive/conversation-archive-response.schema.json",
 "title": "Conversation Archive Response",
-"description": "Public response schema for the archive_conversation workflow. This schema defines the client-facing confirmation returned after archive content has been accepted and stored.",
+"description": "Response schema for the confirmation returned after archive content has been accepted and stored.",
 "type": "object",
 "additionalProperties": false,
 "required": [

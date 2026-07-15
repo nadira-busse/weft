@@ -50,7 +50,7 @@ Recommended reading order:
 8. [`patterns/`](./patterns/)
 9. [`case-studies/`](./case-studies/)
 10. [`proof/`](./proof/)
-11. [`status/`](./status/)
+11. [`status/known-limitations.md`](./status/known-limitations.md)
 
 ---
 
@@ -62,8 +62,6 @@ Weft focuses on the system around the tools:
 
 * how context is captured
 * how records are structured
-* how duplicate writes are avoided
-* how workflow errors are traced
 * how archived context can support later work
 * where the current system has limits
 

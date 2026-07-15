@@ -12,28 +12,17 @@ The issue was not search correctness. It was final response aggregation.
 
 ## Why This Case Matters
 
-This is the kind of failure that weakens trust quickly.
+The workflow appeared correct while silently dropping valid results.
 
-A system can appear correct while silently dropping valid results. That is especially risky in archive and retrieval systems, where result completeness is part of correctness.
-
-The lesson here is specific to Make: bundle behavior has to be handled explicitly. Assuming multiple records will automatically combine into one response array is exactly what caused this bug.
+In Make, multiple bundles do not automatically become one response array. Final aggregation has to be explicit.
 
 ---
 
 ## Runtime Problem
 
-The Notion Search step returned multiple valid matches.
+The Notion Search step returned multiple valid matches, but the final scenario output exposed only one result.
 
-However, the final scenario output exposed only one result.
-
-This happened despite:
-
-* correct filtering
-* correct search execution
-* multiple valid records
-* an apparently valid response structure
-
-The system therefore looked correct while silently returning only one bundle in the final output.
+The workflow therefore looked correct while silently returning only one bundle in the final output.
 
 ---
 
@@ -155,14 +144,8 @@ Do not rely on Search or Return Output to combine bundles implicitly.
 
 ---
 
-## What This Proves
+## Evidence
 
-What this case is evidence of:
+This case shows the difference between per-bundle transformation and final response assembly.
 
-* understanding of Make bundle semantics
-* separation between per-bundle mapping and final response construction
-* explicit control over multi-result output
-* prevention of silent data loss in retrieval
-* contract-level assembly before returning the response
-
-The reason this is worth documenting: the failure is easy to miss. The workflow can look correct while quietly returning incomplete results.
+It also shows that result completeness is enforced explicitly instead of being assumed from Make’s default bundle behavior.

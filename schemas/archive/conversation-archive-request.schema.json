@@ -1,8 +1,8 @@
 {
 "$schema": "https://json-schema.org/draft/2020-12/schema",
 "$id": "schemas/archive/conversation-archive-request.schema.json",
-"title": "Conversation Archive Payload",
-"description": "Public request schema for the archive_conversation workflow. This schema defines the archive payload accepted by the public workflow boundary and intentionally excludes private storage implementation details.",
+"title": "Conversation Archive Request",
+"description": "Request schema for the archive_conversation workflow.",
 "type": "object",
 "additionalProperties": false,
 "required": [

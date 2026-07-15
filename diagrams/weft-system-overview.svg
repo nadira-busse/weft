@@ -20,11 +20,11 @@
 <text class="ts" x="340" y="50" text-anchor="middle">Archive-First Architecture for Deterministic AI Workflows</text>
 
 <!-- Box 1: AI Clients -->
-<rect x="100" y="80" width="480" height="100" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
-<text class="th" x="340" y="105" text-anchor="middle" dominant-baseline="central">AI Clients</text>
-<text class="ts" x="340" y="127" text-anchor="middle" dominant-baseline="central">ChatGPT, Claude, etc.</text>
-<text class="ts" x="340" y="145" text-anchor="middle" dominant-baseline="central">Reasoning and interaction</text>
-<text class="ts" x="340" y="163" text-anchor="middle" dominant-baseline="central">No authoritative system state</text>
+<rect x="100" y="60" width="480" height="100" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text class="th" x="340" y="85" text-anchor="middle" dominant-baseline="central">AI Clients</text>
+<text class="ts" x="340" y="107" text-anchor="middle" dominant-baseline="central">ChatGPT, Claude, etc.</text>
+<text class="ts" x="340" y="125" text-anchor="middle" dominant-baseline="central">Reasoning and interaction</text>
+<text class="ts" x="340" y="143" text-anchor="middle" dominant-baseline="central">No authoritative system state</text>
 
 <!-- Arrow 1 -->
 <line x1="340" y1="160" x2="340" y2="200" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
@@ -51,7 +51,7 @@
 <rect x="100" y="440" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
 <text class="th" x="340" y="465" text-anchor="middle" dominant-baseline="central">Context Layer</text>
 <text class="ts" x="340" y="487" text-anchor="middle" dominant-baseline="central">Deterministic transformation</text>
-<text class="ts" x="340" y="505" text-anchor="middle" dominant-baseline="central">Context reconstruction</text>
+<text class="ts" x="340" y="505" text-anchor="middle" dominant-baseline="central">Context retrieval</text>
 
 <!-- Arrow 4 -->
 <line x1="340" y1="520" x2="340" y2="560" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
@@ -68,10 +68,10 @@
 <!-- Box 6: Output -->
 <rect x="100" y="680" width="480" height="64" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
 <text class="th" x="340" y="700" text-anchor="middle" dominant-baseline="central">Structured Context</text>
-<text class="ts" x="340" y="722" text-anchor="middle" dominant-baseline="central">Deterministically reconstructed and reusable across sessions</text>
+<text class="ts" x="340" y="722" text-anchor="middle" dominant-baseline="central">Retrieved in a structured response and reusable across sessions</text>
 
 <!-- Side note -->
 <rect x="40" y="762" width="600" height="24" rx="4" fill="#f5f5f5" stroke="#d3d3d3" stroke-width="0.5"/>
-<text class="ts" x="340" y="778" text-anchor="middle" dominant-baseline="central">Archived interactions are persistently stored and reconstructable on request.</text>
+<text class="ts" x="340" y="778" text-anchor="middle" dominant-baseline="central">Archived interactions are persistently stored and retrievable on request.</text>
 
 </svg>

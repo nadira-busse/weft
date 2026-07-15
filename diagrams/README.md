@@ -23,11 +23,3 @@ Start with:
 2. [`../architecture/system-overview.md`](../architecture/system-overview.md)
 3. [`../architecture/layer-model.md`](../architecture/layer-model.md)
 4. [`../case-studies/archive-conversation-system/`](../case-studies/archive-conversation-system/)
-
----
-
-## Publication Note
-
-The diagrams show public architecture boundaries, not private implementation detail.
-
-Implementation-specific workflow logic, Make mappings, private database structures, internal identifiers and sensitive runtime data are intentionally omitted.

@@ -22,7 +22,7 @@ The `get-context` response reflects block-based retrieval from the archive conte
 
 Notion limits rich-text `text.content` values to 2000 characters.
 
-The example response reconstructs a record with:
+The example response returns archived content with:
 
 ```text
 Content length: 3673 characters
@@ -30,14 +30,6 @@ Content length: 3673 characters
 
 That is more than one Notion rich-text value can hold.
 
-The system retrieves text from multiple stored blocks and returns it in the defined get_context response shape. It is not reconstructed from short metadata fields or generated summaries.
+The system retrieves text from multiple stored blocks and returns it in the defined `get_context` response shape. The content comes from the stored archive blocks, not from short metadata fields or generated summaries.
 
 Example content may be shortened for readability while preserving the response structure.
-
----
-
-## Boundary
-
-These examples document workflow contract shapes.
-
-They are not complete runtime payloads, internal database exports or deployable Make scenario exports.

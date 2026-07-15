@@ -19,11 +19,9 @@ That created several problems:
 
 ## Why This Case Matters
 
-Search is only useful when its output stays predictable.
+`search_archive` is a selection flow. It should return bounded candidate records, not full archive content or raw Notion structures.
 
-In Weft, `search_archive` is a selection flow. It should return bounded candidate records, not full archive reconstruction and not raw Notion storage structures.
-
-Until I fixed this, the response sometimes showed one result while there were actually several matches — I didn't notice until I started comparing the run history against what Notion itself showed.
+The response sometimes showed one result while Notion contained several matches. I only found this by comparing the scenario run history with the records returned by Notion.
 
 ---
 
@@ -179,10 +177,6 @@ and return only the approved public structure.
 
 ---
 
-## What This Proves
+## Evidence
 
-This case proves that Weft’s search output is not just whatever Make or Notion returns by default.
-
-The workflow now applies an explicit projection layer before returning data. That keeps search output bounded, predictable and aligned with the response contract.
-
-I couldn't have written this case without actually running into it — the bug was in an Aggregator setting I only spotted once I lined up the runs side by side.
+This case shows that the final search response is explicitly projected and aggregated before it is returned, not left to whatever Make or Notion happen to return by default.

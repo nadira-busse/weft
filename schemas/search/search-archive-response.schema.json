@@ -2,7 +2,7 @@
 "$schema": "https://json-schema.org/draft/2020-12/schema",
 "$id": "schemas/search/search-archive-response.schema.json",
 "title": "Search Archive Response",
-"description": "Public response schema for search_archive. This schema follows the actual public example response and returns public-safe archive result summaries.",
+"description": "Response schema for search_archive, returning archive result summaries.",
 "type": "object",
 "additionalProperties": false,
 "required": [
@@ -24,7 +24,7 @@
 },
 "results": {
 "type": "array",
-"description": "Public-safe archive search results.",
+"description": "Archive record summaries returned by the search workflow.",
 "items": {
 "type": "object",
 "additionalProperties": false,
@@ -40,7 +40,7 @@
 "id": {
 "type": "string",
 "minLength": 1,
-"description": "Public-safe archive record identifier."
+"description": "Archive record identifier returned by the workflow."
 },
 "title": {
 "type": "string",
@@ -55,7 +55,7 @@
 "summary": {
 "type": "string",
 "minLength": 1,
-"description": "Public-safe summary."
+"description": "Summary of the archived record."
 },
 "model_origin": {
 "type": "string",

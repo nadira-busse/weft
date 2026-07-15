@@ -83,8 +83,6 @@ Make handles orchestration. Notion is the current human-readable system of recor
 
 AI clients and workflow clients can invoke the system if they send the expected payload shape.
 
-In this repository, I document the MCP-enabled invocation route. The same logical archive, search and get-context flows can also be invoked from Custom GPTs through separate Make webhook scenarios in my working setup. Those webhook variants use the same archive system of record, but their scenario-level configuration is not documented here.
-
 ---
 
 ## How It Works
@@ -133,7 +131,7 @@ Search does not rebuild full context. It selects bounded archive candidates.
 
 Retrieves archived content for continued work.
 
-Instead of relying only on AI-client memory, context is rebuilt from persisted records.
+Instead of relying only on AI-client memory, stored context is retrieved from persisted records.
 
 ---
 
@@ -173,8 +171,6 @@ Make has a rollback mechanism, but it doesn't apply to most Notion actions — i
 
 ## Evidence in This Repository
 
-This repository is designed to show the system without exposing private runtime details.
-
 You can verify:
 
 - architecture model and workflow boundaries
@@ -211,6 +207,14 @@ The [`proof/`](./proof/) directory documents issues I ran into while building We
 - relation traversal and identifier mapping
 
 These cases show where the workflow broke, what the root cause was and how I corrected it.
+
+---
+
+### End-to-End Demo: Cross-Model Context Transfer
+
+This short walkthrough shows the full loop: archiving a conversation from ChatGPT into Notion through the `archive_conversation` scenario, the Make run completing successfully, and Claude retrieving the same archived context through `get_context`.
+
+▶ [Watch the demo](your-link-here)
 
 ---
 
@@ -291,18 +295,15 @@ They are included because they show how I think about workflow reliability, not 
 
 ---
 
-## What Is Intentionally Not Published
+## Scope and Limitations
 
-The repository does not publish:
+Weft documents a working private implementation, but this repository is not a deployable open-source package or packaged SaaS product.
 
-- private Notion database schemas
-- internal Notion IDs
-- webhook URLs
-- API keys or credentials
-- full Make scenario mappings
-- private runtime payloads
-- personal archive content
-- full MCP invocation configuration
+Private runtime configuration, credentials, internal identifiers, personal archive content and full Make and Notion setup details are intentionally excluded.
+
+The current implementation uses Make and Notion as an MVP stack, with the trade-offs that come with those choices. Multi-user access, advanced permissioning, high-scale storage and production-grade observability are outside the current scope.
+
+See [`status/known-limitations.md`](./status/known-limitations.md) for the detailed technical boundaries.
 
 ---
 
@@ -315,30 +316,6 @@ The repository does not publish:
 | Notion as MVP system of record | Human-readable and easy to inspect        | Not designed for high-scale storage  |
 | Explicit routing               | More predictable workflow behavior        | More orchestration logic             |
 | Client-independent inputs      | AI clients remain replaceable             | Requires stricter payload discipline |
-
----
-
-## Limitations
-
-Weft documents a working architecture and implementation evidence.
-
-It is not:
-
-- a packaged SaaS product
-- a full open-source deployment package
-- a high-scale production backend
-- a replacement for dedicated observability, permissions or storage infrastructure
-
-Current limitations:
-
-- Make scenarios are documented but not distributed as deployable blueprints.
-- Notion setup is not fully published.
-- Screenshots are redacted where needed.
-- Performance is limited by Make and Notion platform constraints.
-- Advanced permissioning and multi-user access are out of scope.
-- Production-grade observability would require a dedicated logging backend.
-
-Known constraints are documented in [`status/`](./status/).
 
 ---
 

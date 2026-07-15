@@ -1,15 +1,15 @@
 {
 "success": true,
 "project": "Weft",
-"title": "Weft — uitgebreide samenvatting",
+"title": "Public Summary — Weft",
 "start_time": "16:00",
 "status": "archived",
 "content_handling": {
 "summarized": false,
 "shortened": false,
-"instruction": "Volledige inhoud gearchiveerd, niet samengevat en niet ingekort."
+"instruction": "Full content archived, not summarized and not shortened."
 },
 "notion": {
-"url": "https://notion.example.com/public-safe-placeholder"
+"url": "https://notion.example.com/archive-record-placeholder"
 }
 }

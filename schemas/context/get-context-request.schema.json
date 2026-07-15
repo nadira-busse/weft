@@ -2,7 +2,7 @@
 "$schema": "https://json-schema.org/draft/2020-12/schema",
 "$id": "schemas/context/get-context-request.schema.json",
 "title": "Get Context Request",
-"description": "Public request schema for the get_context workflow. Supports conversation_id, query, project, date_from, date_to and limit as defined by the current Make input boundary.",
+"description": "Request schema for the get_context workflow.",
 "type": "object",
 "additionalProperties": false,
 "properties": {

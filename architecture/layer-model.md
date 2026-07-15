@@ -75,7 +75,7 @@ It is responsible for shaping data before it is used by a workflow or AI client.
 
 * retrieve structured records
 * normalize data formats
-* assemble context for later use
+* shape retrieved archive content for later use
 * enforce expected input and output shapes
 
 ### Invariants
@@ -90,7 +90,7 @@ It is responsible for shaping data before it is used by a workflow or AI client.
 * Make modules
 * JSON payload shaping
 * Notion block text extraction
-* context assembly for `get_context`
+* structured context retrieval for `get_context`
 
 ---
 
@@ -126,34 +126,20 @@ It decides which route runs, which checks happen first and how failures are hand
 
 ---
 
-## Layer Interaction
+## Why the Boundaries Matter
 
-The layers work together in this order:
-
-1. **Data Layer** stores structured records.
-2. **Context Layer** turns stored records into usable context.
-3. **Orchestration Layer** executes workflows using validated inputs and assembled context.
-
-Each layer consumes the output of the layer below it.
-
-A workflow should not bypass the Context Layer to reshape stored data informally, and the Context Layer should not silently mutate the Data Layer.
-
----
-
-## Why This Model Matters
-
-This model exists because workflow systems become fragile when responsibilities blur.
+Workflow systems become fragile when responsibilities blur. A workflow should not bypass the Context Layer to reshape stored data informally, and the Context Layer should not silently mutate the Data Layer.
 
 The problems I wanted to avoid were:
 
 * duplicate logic in multiple scenarios
 * hidden data transformations
-* unclear source-of-truth boundaries
+* unclear system-of-record boundaries
 * workflow retries creating inconsistent state
 * tightly coupled Make modules that are hard to debug
 * AI clients depending on chat memory instead of stored context
 
-The layer model keeps the system easier to inspect, explain and change.
+These boundaries keep the system easier to inspect, explain and change.
 
 ---
 

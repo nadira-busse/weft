@@ -89,6 +89,8 @@ A reviewer or maintainer should be able to see:
 
 Weft keeps error logging separate from normal archive records because execution failures should not be mixed with archived source content.
 
+This does not guarantee that nothing ever goes wrong. It means that when something breaks, I can usually see where and why fairly quickly.
+
 ---
 
 ## Composable Workflow Design
@@ -100,22 +102,3 @@ For example, Notion block text extraction can live in a separate subscenario ins
 This reduces duplication and makes maintenance easier.
 
 However, splitting workflows is only useful when it makes the system easier to understand. If decomposition creates more routing, more hidden dependencies or more debugging effort, it is not an improvement.
-
----
-
-## Why These Principles Matter
-
-These principles help keep Weft from turning into a collection of disconnected automations.
-
-They protect against:
-
-* duplicated logic
-* unclear source-of-truth boundaries
-* hidden data transformations
-* unstable identifiers
-* workflow retries that create inconsistent state
-* errors that disappear inside Make run history
-
-There's no guarantee nothing ever goes wrong.
-
-What I do get is this: when something breaks, I can usually see where and why fairly quickly.

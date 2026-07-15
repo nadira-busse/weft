@@ -81,13 +81,13 @@
 <!-- Box 7 - emphasized differentiator -->
 <text class="layertag" x="65" y="632">Context Layer</text>
 <rect x="60" y="640" width="460" height="80" rx="8" fill="#D7EAFB" stroke="#1F6FBF" stroke-width="2"/>
-<text class="th" x="290" y="668" text-anchor="middle" dominant-baseline="central" font-weight="600">Reconstruct runtime context</text>
+<text class="th" x="290" y="668" text-anchor="middle" dominant-baseline="central" font-weight="600">Retrieve stored archive context</text>
 <text class="ts" x="290" y="688" text-anchor="middle" dominant-baseline="central">on explicit request</text>
 
 <!-- Storage: Archive Repository -->
 <rect x="620" y="412" width="210" height="50" rx="10" fill="#EAF7EE" stroke="#2FA84F" stroke-width="0.75"/>
 <text class="th" x="725" y="431" text-anchor="middle" dominant-baseline="central">Archive Repository</text>
-<text class="ts" x="725" y="448" text-anchor="middle" dominant-baseline="central">source of truth</text>
+<text class="ts" x="725" y="448" text-anchor="middle" dominant-baseline="central">system of record</text>
 <line x1="520" y1="440" x2="620" y2="437" stroke="#2FA84F" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
 
 <!-- Storage: Related Records -->
@@ -118,5 +118,4 @@
 <rect x="890" y="535" width="170" height="55" rx="10" fill="#EAF7EE" stroke="#2FA84F" stroke-width="0.75"/>
 <text class="th" x="975" y="562" text-anchor="middle" dominant-baseline="central">Operational Logs</text>
 
-<text class="subtitle" x="550" y="755" text-anchor="middle" font-style="italic">Implementation-specific workflow logic, mappings and configuration are intentionally omitted.</text>
 </svg>

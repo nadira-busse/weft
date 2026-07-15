@@ -18,7 +18,7 @@
     "content": {
       "type": "string",
       "minLength": 1,
-      "description": "Message content. Public examples may include intentionally public project documentation content or redacted private content."
+      "description": "Content of the archived message."
     }
   }
 }

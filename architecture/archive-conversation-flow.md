@@ -1,12 +1,6 @@
 # Archive-First Context Flow
 
-This document describes the public architecture behind archiving AI-assisted work in Weft and retrieving it later as runtime context.
-
-It explains the workflow boundary, not a deployable Make blueprint.
-
-Implementation-specific orchestration logic, Make module configuration, private mappings, filters, runtime payloads and database relation details are intentionally omitted.
-
-Public schemas and contract examples are documented elsewhere in the repository to show the workflow boundaries without exposing live workflow data.
+This document explains how Weft archives AI-assisted work and retrieves it later as runtime context.
 
 ![Archive-First Context Flow](../diagrams/archive-conversation-flow.svg)
 
@@ -37,11 +31,10 @@ Later, in a separate session and only through an explicit request, the system ca
 
 Retrieval can happen through:
 
-* direct identifier lookup
-* search followed by selection
-* context reconstruction from a stored archive record
+- direct lookup by conversation ID
+- search by project, date range or query, followed by record selection
 
-The retrieved content is rebuilt from the archived record.
+After a record is selected, `get_context` retrieves the stored content and returns it in a structured response.
 
 Retrieval does not reinterpret meaning, generate missing source content or modify the stored archive record.
 
@@ -51,20 +44,20 @@ Retrieval does not reinterpret meaning, generate missing source content or modif
 
 This flow follows the same layer model described in:
 
-* [`layer-model.md`](./layer-model.md)
-* [`system-overview.md`](./system-overview.md)
+- [`layer-model.md`](./layer-model.md)
+- [`system-overview.md`](./system-overview.md)
 
-| Layer                | Responsibility in this flow                                                         |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| AI / Client Layer    | Provides the interaction or workflow output that may be archived                    |
-| Invocation Interface | Defines the request boundary into the orchestration system                          |
-| Orchestration Layer  | Handles validation, routing, linking, writes, retries and failure handling          |
-| Context Layer        | Shapes archive payloads and reconstructs stored records into usable runtime context |
-| Data Layer           | Stores archive records, relations and operational evidence                          |
+| Layer                | Responsibility in this flow                                                    |
+| -------------------- | ------------------------------------------------------------------------------ |
+| AI / Client Layer    | Provides the interaction or workflow output that may be archived               |
+| Invocation Interface | Defines the request boundary into the orchestration system                     |
+| Orchestration Layer  | Handles validation, routing, linking, writes, retries and failure handling     |
+| Context Layer        | Shapes archive payloads and retrieves stored records as usable runtime context |
+| Data Layer           | Stores archive records, relations and operational evidence                     |
 
 The AI client does not own persistence.
 
-The archive is the source of record for explicitly archived workflow state.
+The archive is the system of record for explicitly archived workflow state.
 
 ---
 
@@ -79,21 +72,3 @@ In the current implementation, the orchestration layer is implemented in Make. I
 Some transient execution failures may be handled through Make platform configuration, such as retry settings, timeouts or error handlers.
 
 Persistent failures are surfaced through controlled failure handling and operational logging.
-
----
-
-## Design Rationale
-
-The archive flow exists because AI chat history is not a reliable source of project memory.
-
-Weft stores selected AI-assisted work as structured, searchable and project-linked archive records.
-
-Runtime context is reconstructed from archived evidence only when requested.
-
-This keeps a clear distinction between:
-
-* what is stored
-* what is retrieved
-* what is currently in use
-
-The result is a system where project context can move across sessions, AI clients and workflow tools without depending on one temporary chat.

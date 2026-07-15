@@ -1,14 +1,8 @@
 # Case Study — Context Continuity System
 
-## Overview
-
 The Context Continuity System describes the retrieval side of Weft.
 
-It exists because AI-assisted work often continues across sessions, AI clients and workflow tools.
-
-Without external persistence, context becomes fragmented and has to be reconstructed manually.
-
-Weft addresses this by storing selected context in a structured archive and retrieving it later through defined workflows.
+It makes selected archive records searchable and retrievable across sessions, AI clients and workflow tools.
 
 ---
 
@@ -32,29 +26,19 @@ Weft addresses this by keeping selected context in a structured archive that can
 
 ## Objective
 
-The objective is to make prior context retrievable for continued work.
+The objective is to return stored context through explicit search and retrieval workflows with stable identifiers and controlled response shapes.
 
-The system supports:
+The system does not try to make an AI client remember everything. It makes selected archived context available again when needed.
 
-- persisted archive records
-- explicit search and retrieval workflows
-- stable identifiers
-- public payload boundaries
-- controlled response shapes
-
-The goal is not to make the AI client “remember everything”.
-
-The goal is to make important context available again when the user needs to continue work.
+This is a controlled archive-and-retrieval layer, not full autonomous memory.
 
 ---
 
 ## Scope
 
-This case study covers the retrieval side of Weft: finding archived records and returning stored context in a structured response so work can continue in an AI client.
+This case study covers finding archived records and returning stored content in a structured response.
 
-The archive write path is covered in the Archive Conversation System case study.
-
-This keeps the document focused on retrieval, not on every possible future memory feature.
+The archive write path is documented separately in the [Archive Conversation System](../archive-conversation-system/) case study.
 
 ---
 
@@ -76,17 +60,9 @@ Structured context response
 AI Client continues work
 ```
 
-The AI client can request context, but it does not own the archive state.
+The request moves through the invocation and orchestration boundaries before stored archive content is retrieved and shaped into a structured response.
 
-The invocation interface defines the controlled request boundary into Weft.
-
-The orchestration layer controls the retrieval workflow.
-
-The context layer shapes retrieved archive content into a usable response.
-
-The data layer provides access to stored archive records.
-
-The structured response goes back to the AI client so the user can continue the work.
+The AI client receives that response, but it does not own or modify the archived source state.
 
 ---
 
@@ -126,51 +102,15 @@ The retrieval side follows these rules:
 - retrieved text should follow the stored archive structure
 - AI clients receive context, but do not become the source of truth
 
-The retrieval workflow should not guess beyond the search boundary. If a query returns multiple records, the response should make that visible instead of silently treating one result as the only relevant context.
-
----
-
-## Dependency on Archive System
-
-Context continuity depends on prior archive operations.
-
-```text
-interaction
-→ archive
-→ storage
-→ search or retrieval
-→ continued work
-```
-
-Without archive persistence, reliable retrieval is not possible.
-
----
-
-## What This Enables
-
-The retrieval side enables:
-
-* finding earlier archive records
-* retrieving stored context for continued work
-* reducing repeated explanation across sessions
-* keeping project decisions easier to trace
-* supporting work across different AI clients
-
-This is not full autonomous memory.
-
-It is a controlled archive-and-retrieval layer that makes important context available outside the chat session.
+The retrieval workflow should not guess beyond the search boundary. Multiple matches must remain visible instead of being silently reduced to one record.
 
 ---
 
 ## Current Boundary
 
-Weft currently retrieves archived content through defined workflows.
+Weft retrieves stored archive content but does not automatically decide which records should be combined, summarized or promoted into project documentation. See [`status/known-limitations.md`](../../status/known-limitations.md) — "Limited Context Composition."
 
-The retrieval side returns stored context so the user can continue work in an AI client.
-
-It does not automatically decide which records should be combined, summarized or promoted into project documentation. Those steps remain explicit user-controlled workflows.
-
-This boundary is intentional: Weft focuses first on reliable archive retrieval before adding more autonomous memory behavior.
+Those steps remain explicit, user-controlled workflows.
 
 ---
 

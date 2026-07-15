@@ -4,7 +4,7 @@
 
 This case documents how date range filtering in the `search_archive` flow was corrected under Make + Notion execution behavior.
 
-The issue was not simply how to filter by date. The real problem was making date-bounded retrieval behave predictably when date inputs are optional and date filters are sensitive to operator choice, empty values and time boundaries.
+The issue was not simply how to filter by date. The real problem was making date-bounded search behave predictably when date inputs are optional and date filters are sensitive to operator choice, empty values and time boundaries.
 
 The correction had to account for:
 
@@ -17,11 +17,9 @@ The correction had to account for:
 
 ## Why This Case Matters
 
-Date filtering looks simple until it becomes operational.
+Small mapping or filter mistakes can return records outside the requested date range.
 
-In practice, small mapping or filter mistakes can return records outside the intended range. That is a serious issue for Weft, because retrieval only works when the query boundary is reliable.
-
-A search result that quietly leaks unrelated records is worse than a visible failure. It looks valid, but violates the user’s intended query.
+That failure is easy to miss because the response still looks valid, even though the search boundary has been violated.
 
 ---
 
@@ -53,7 +51,7 @@ Start_time <= date_to
 
 then almost the entire archive can match.
 
-Anything satisfying either half is returned. That destroys bounded retrieval.
+Anything satisfying either half is returned. That destroys the intended search boundary.
 
 ### 2. Ambiguous end-date behavior
 
@@ -115,7 +113,7 @@ This makes one-sided and same-day searches explicit instead of relying on implic
 | `date_from` only        | Search starts at the requested lower boundary and remains bounded by fallback upper handling |
 | `date_to` only          | Search starts from the archive baseline and ends at the requested day                        |
 | `date_from` + `date_to` | Search is constrained to the requested date range                                            |
-| Same-day search         | Search behaves as day-bounded retrieval                                                      |
+| Same-day search         | Search returns only records within the requested day                                                     |
 | Both empty              | Date route does not apply, or fallback behavior remains explicit                             |
 
 ---
@@ -153,8 +151,8 @@ and normalize the upper date boundary explicitly.
 
 ---
 
-## What This Proves
+## Evidence
 
-The workflow was corrected so date-bounded search behaves as an explicit retrieval boundary, not as best-effort filtering. Weft depends on that boundary holding, since predictable search is part of what makes retrieval trustworthy.
+This case shows that date filtering is enforced at the search boundary through explicit lower and upper bounds.
 
-This demonstrates that the issue was corrected at the query-boundary level instead of patched after retrieval.
+The correction was applied in the query logic, rather than filtering incorrect results after the search.
