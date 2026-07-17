@@ -77,4 +77,4 @@ In practice, I can archive work from one AI client, retrieve it later and contin
 
 Important project state therefore does not depend on one chat, one model or one interface.
 
-See a recorded example of this flow: [Cross-model context transfer demo](https://youtu.be/-l3IXwZ3F6U)
+See a recorded example of this flow: [Cross-model context transfer demo](https://youtu.be/980BhT4nMWc)

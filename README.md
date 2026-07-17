@@ -214,7 +214,7 @@ These cases show where the workflow broke, what the root cause was and how I cor
 
 This short walkthrough shows the full loop: archiving a conversation from ChatGPT into Notion through the `archive_conversation` scenario, the Make run completing successfully, and Claude retrieving the same archived context through `get_context`.
 
-▶ [Watch the demo](https://youtu.be/-l3IXwZ3F6U)
+▶ [Watch the demo](https://youtu.be/980BhT4nMWc)
 
 ---
 
