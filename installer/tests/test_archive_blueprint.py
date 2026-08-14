@@ -113,6 +113,25 @@ class ArchiveBlueprintTests(unittest.TestCase):
         self.assertEqual(field_values(self.module(71))["Project key"], "{{62.project_key}}")
         self.assertEqual(field_values(self.module(120))["Project key"], "{{62.project_key}}")
 
+    def test_categories_restore_cache_is_sanitized(self) -> None:
+        expected = {
+            "name": "eBXT",
+            "type": "select",
+            "label": "Categories",
+            "options": [{"label": "Uncategorized", "value": "Uncategorized"}],
+            "metadata": {"type": "multi_select"},
+            "multiple": True,
+            "validate": False,
+        }
+        for module_id in (71, 120):
+            with self.subTest(module=module_id):
+                module = self.module(module_id)
+                specs = module["metadata"]["restore"]["expect"]["data_source"]["nested"][0]["spec"]
+                categories = [spec for spec in specs if spec.get("label") == "Categories"]
+                self.assertEqual(categories, [expected])
+                self.assertEqual(module["mapper"]["fields"]["eBXT"], "{{62.categories_norm}}")
+        self.assertNotIn("LinkedIn", json.dumps(self.blueprint, ensure_ascii=False))
+
     def test_success_and_conflict_outputs_use_canonical_identity(self) -> None:
         outputs = [
             module
@@ -203,6 +222,17 @@ class ArchiveBlueprintTests(unittest.TestCase):
 
 
 class RepositoryEnvironmentTests(unittest.TestCase):
+    def test_notion_connection_restore_labels_are_neutral(self) -> None:
+        blueprint_dir = ROOT / "setup" / "Make" / "blueprints"
+        for path in sorted(blueprint_dir.glob("*.json")):
+            blueprint = json.loads(path.read_text(encoding="utf-8-sig"))
+            for _, module in walk_modules(blueprint):
+                if not module["module"].startswith("notion:"):
+                    continue
+                connection = module["metadata"]["restore"]["parameters"]["__IMTCONN__"]
+                with self.subTest(blueprint=path.name, module=module["id"]):
+                    self.assertEqual(connection["label"], "Weft Notion")
+
     def test_env_is_ignored_and_example_is_empty(self) -> None:
         ignore_lines = {
             line.strip()
