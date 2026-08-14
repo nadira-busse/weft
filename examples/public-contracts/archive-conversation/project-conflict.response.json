@@ -1,0 +1,10 @@
+{
+  "status": "blocked",
+  "conversation_id": "example-conversation-001",
+  "record_id": "example-record-001",
+  "notion_url": "https://www.notion.so/example-record-001",
+  "error_type": "PROJECT_CONFLICT",
+  "message": "Conversation exists under a different project; request blocked without changes.",
+  "module": "archive_conversation.guard.project_key",
+  "timestamp": "2026-08-06T09:25:39+02:00"
+}

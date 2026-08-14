@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "result_count": 0,
+  "results": [],
+  "meta": {
+    "scenario": "get_context",
+    "source": "Notion_Archive_Database",
+    "retrieval_mode": "query"
+  },
+  "message": "No matching archive records found."
+}

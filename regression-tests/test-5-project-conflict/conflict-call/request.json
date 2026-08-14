@@ -1,0 +1,19 @@
+{
+  "conversation_id": "route-v4-test-03-existing-project-new-archive",
+  "conversation_title": "Route V4 Test 5 - existing project conflict",
+  "project": "Route V4 Beta",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T18:26:00+02:00",
+  "end_time": "2026-08-06T18:31:00+02:00",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "user",
+      "content": "This content must not be appended because Route V4 Beta conflicts with the stored Route V4 Alpha project key."
+    }
+  ],
+  "summary": "Regression test 5 verifies that an existing Alpha archive cannot be reassigned to the separate Beta project and that the request is blocked without changes.",
+  "source": "chat",
+  "source_platform": "claude",
+  "priority": "low"
+}

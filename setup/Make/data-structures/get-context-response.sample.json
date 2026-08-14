@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "title": "Example title",
+      "project": "example-project",
+      "full_content": "Example archived content.",
+      "message_count": 1,
+      "content_length": 25,
+      "conversation_id": "example-conversation-001"
+    }
+  ]
+}

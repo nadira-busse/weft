@@ -1,0 +1,13 @@
+{
+  "results": [
+    {
+      "id": "example-record-001",
+      "conversation_id": "example-conversation-001",
+      "title": "Example title",
+      "project": "example-project",
+      "summary": "Example summary.",
+      "key_insights": "Example insight.",
+      "model_origin": "ChatGPT"
+    }
+  ]
+}

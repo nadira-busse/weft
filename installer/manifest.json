@@ -1,0 +1,249 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "key": "notion_text_formatter",
+      "blueprint": "setup/Make/blueprints/weft_notion_text_formatter.json",
+      "role": "internal_child",
+      "dependencies": []
+    },
+    {
+      "key": "archive_conversation",
+      "blueprint": "setup/Make/blueprints/weft_archive_conversation.json",
+      "role": "public_mcp",
+      "dependencies": []
+    },
+    {
+      "key": "search_archive",
+      "blueprint": "setup/Make/blueprints/weft_search_archive.json",
+      "role": "public_mcp",
+      "dependencies": []
+    },
+    {
+      "key": "create_daily_log",
+      "blueprint": "setup/Make/blueprints/weft_create_daily_log.json",
+      "role": "optional_supporting",
+      "dependencies": []
+    },
+    {
+      "key": "get_context",
+      "blueprint": "setup/Make/blueprints/weft_get_context.json",
+      "role": "public_mcp",
+      "dependencies": [
+        "notion_text_formatter"
+      ]
+    }
+  ],
+  "data_structures": [
+    {
+      "key": "archive_messages",
+      "name": "Weft - Archive Messages",
+      "source_labels": [
+        "canonical payload representation for storage"
+      ],
+      "spec": [
+        {
+          "name": "messages",
+          "type": "array",
+          "required": false,
+          "spec": {
+            "name": "value",
+            "type": "collection",
+            "required": false,
+            "spec": [
+              {
+                "name": "role",
+                "type": "text",
+                "required": true
+              },
+              {
+                "name": "content",
+                "type": "text",
+                "required": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "search_archive_response",
+      "name": "Weft - Search Archive Response",
+      "source_labels": [
+        "SearchArchiveRespons"
+      ],
+      "spec": [
+        {
+          "name": "results",
+          "type": "array",
+          "required": false,
+          "spec": {
+            "name": "value",
+            "type": "collection",
+            "required": false,
+            "spec": [
+              {
+                "name": "id",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "title",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "project",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "summary",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "key_insights",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "model_origin",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "conversation_id",
+                "type": "text",
+                "required": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "get_context_response",
+      "name": "Weft - Get Context Response",
+      "source_labels": [
+        "GetContextResponse"
+      ],
+      "spec": [
+        {
+          "name": "results",
+          "type": "array",
+          "required": false,
+          "spec": {
+            "name": "value",
+            "type": "collection",
+            "required": false,
+            "spec": [
+              {
+                "name": "conversation_id",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "title",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "project",
+                "type": "text",
+                "required": false
+              },
+              {
+                "name": "message_count",
+                "type": "number",
+                "required": false
+              },
+              {
+                "name": "content_length",
+                "type": "number",
+                "required": false
+              },
+              {
+                "name": "full_content",
+                "type": "text",
+                "required": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "daily_log_content",
+      "name": "Weft - Daily Log Content",
+      "source_labels": [
+        "Daily Log Content"
+      ],
+      "spec": [
+        {
+          "name": "daily_summary",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "actions",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "notion_resources": [
+    {
+      "key": "Archive",
+      "title": "Archive"
+    },
+    {
+      "key": "Projects",
+      "title": "Projects"
+    },
+    {
+      "key": "Daily Log",
+      "title": "Daily Log"
+    },
+    {
+      "key": "Error Logs",
+      "title": "Error Logs"
+    }
+  ],
+  "notion_aliases": {
+    "archive": "Archive",
+    "archive db": "Archive",
+    "archive database": "Archive",
+    "projects": "Projects",
+    "project": "Projects",
+    "project db": "Projects",
+    "daily log": "Daily Log",
+    "daglog": "Daily Log",
+    "error log": "Error Logs",
+    "error logs": "Error Logs"
+  },
+  "module_semantic_overrides": {
+    "create_daily_log": {
+      "22": "Daily Log",
+      "35": "Archive"
+    }
+  },
+  "connections": {
+    "notion": {
+      "family": "notion3",
+      "explicit_config_key": "WEFT_NOTION_CONNECTION_ID"
+    },
+    "ai_provider": {
+      "family": "ai-provider",
+      "explicit_config_key": "WEFT_AI_CONNECTION_ID",
+      "requires_ui_visible": true
+    }
+  },
+  "known_export_residuals": []
+}

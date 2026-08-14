@@ -1,0 +1,11 @@
+{
+  "conversation_id": " ",
+  "conversation_title": "Whitespace identity must be rejected",
+  "project": "Weft",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T09:10:00Z",
+  "message_count": 1,
+  "messages": [
+    { "role": "user", "content": "This request must not reach a Notion operation." }
+  ]
+}

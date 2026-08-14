@@ -1,0 +1,10 @@
+{
+  "status": "blocked",
+  "conversation_id": "route-v4-test-03-existing-project-new-archive",
+  "record_id": "00000000-0000-4000-8000-000000000003",
+  "notion_url": "https://example.notion.site/route-v4-test-04-updated-archive-00000000000040008000000000000003",
+  "error_type": "PROJECT_CONFLICT",
+  "message": "Conversation exists under a different project; request blocked without changes.",
+  "module": "archive_conversation.guard.project_key",
+  "timestamp": "2026-08-06T18:42:22.427+02:00"
+}

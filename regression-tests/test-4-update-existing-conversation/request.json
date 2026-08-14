@@ -1,0 +1,19 @@
+{
+  "conversation_id": "route-v4-test-03-existing-project-new-archive",
+  "conversation_title": "Route V4 Test 4 - update existing archive same project",
+  "project": "Route V4 Alpha",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T18:26:00+02:00",
+  "end_time": "2026-08-06T18:31:00+02:00",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Route V4 regression test 4 updated content for the existing archive."
+    }
+  ],
+  "summary": "Regression test 4 verifies that an existing archive record is updated under the same project without creating a duplicate project or archive record.",
+  "source": "chat",
+  "source_platform": "chatgpt",
+  "priority": "highNormalHigh"
+}

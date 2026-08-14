@@ -1,0 +1,8 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Example message content.\nThis field may contain multiple lines."
+    }
+  ]
+}

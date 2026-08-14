@@ -1,0 +1,19 @@
+{
+  "conversation_id": "route-v4-test-07-missing-project-conflict",
+  "conversation_title": "Route V4 Test 7 - conflicting requested project",
+  "project": "Route V4 Epsilon",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T18:53:00+02:00",
+  "end_time": "2026-08-06T18:58:00+02:00",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "user",
+      "content": "This content must not be appended because Route V4 Epsilon conflicts with the stored Route V4 Delta project key."
+    }
+  ],
+  "summary": "Regression test 7 verifies that a missing Delta project cannot be replaced by a conflicting Epsilon project when the archive retains the stored Delta project key.",
+  "source": "chat",
+  "source_platform": "claude",
+  "priority": "low"
+}

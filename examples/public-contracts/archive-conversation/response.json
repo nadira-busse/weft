@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "conversation_id": "example-conversation-001",
+  "record_id": "example-record-001",
+  "notion_url": "https://www.notion.so/example-record-001",
+  "error_type": null,
+  "message": "archived",
+  "module": "archive_conversation",
+  "timestamp": "2026-08-04T09:25:39+02:00"
+}

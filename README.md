@@ -1,353 +1,121 @@
-# Weft — Archive-First Context Infrastructure for AI Workflows
+# Weft
 
-Weft documents a running archive-first system for AI project context.
+Weft started with a recurring problem in my own AI work: important project context was spread across conversations, and continuing work elsewhere often meant rebuilding part of that context first. I began storing selected conversations, decisions and workflow output as structured records that I could search and retrieve later.
 
-I built it because important project context kept getting lost in temporary chats, workflow outputs and scattered notes. When I wanted to continue later, I often had to reconstruct what had already happened: decisions, errors, next steps and project state.
+The AI landscape has changed since then. Project memory, past-chat retrieval and persistent context are now much more capable in mainstream AI products. That changed the reason for publishing Weft. It is not intended to replace the memory features of a specific AI client. Instead, this repository shows how an explicit archive-and-retrieval layer can be built, inspected, tested and reproduced independently of a model's internal memory behavior.
 
-Weft solves that by storing selected conversations, decisions and workflow outputs as structured records that can be searched, linked to projects and reused later.
+Technically, Weft is an archive-first reference implementation built with Make, Notion and MCP-enabled AI clients. Make handles orchestration, Notion is the human-readable source of record, and three public workflows provide archive, search and context-retrieval operations.
 
-The current system runs on Make and Notion. This repository shows the public architecture, contracts, schemas, examples, screenshots, proof cases, patterns and known limitations.
+The repository includes the canonical Make blueprints, public contracts and schemas, sanitized fixtures, regression evidence, and a Python installer for repeatable provisioning.
 
-It does not publish my full private runtime setup.
+## Public workflows
 
----
+| Scenario | Responsibility | Status |
+|---|---|---|
+| `archive_conversation` | Validate and create or update a durable archive record | Core MCP contract |
+| `search_archive` | Return bounded archive candidates through five established routes | Core MCP contract |
+| `get_context` | Return full persisted content through four established routes | Core MCP contract |
 
-## Summary
+Two additional workflows support the implementation:
 
-Weft saves selected AI conversations, decisions and workflow outputs in a structured way, so I can find and reuse them later.
+- `weft_notion_text_formatter` is an internal deterministic child workflow used by `get_context`.
+- `weft_create_daily_log` is an optional scheduled summary workflow and is not part of the public MCP contract.
 
-The basic rule is simple: important context is saved first, and only reused after that.
+## What is reproducible
 
----
+Weft is published as a reference implementation rather than a zero-touch deployment package.
 
-## 10-Minute Reviewer Path
+The public installer automates the repeatable Make provisioning work, including target discovery, dependency rebinding, candidate validation, scenario creation and read-back verification. A small manual boundary remains for external platform actions such as Notion template duplication, connection authorization, MCP exposure and final live acceptance.
 
-You do not need to read the whole repository to understand the project.
+The recorded evidence for the current public implementation includes:
 
-1. [`README.md`](./README.md) — what Weft is and why I built it
-2. [`proof/README.md`](./proof/README.md) — runtime proof and debugging evidence
-3. [`assets/screenshots/README.md`](./assets/screenshots/README.md) — runtime screenshots
-4. [`status/known-limitations.md`](./status/known-limitations.md) — current boundaries and limitations
+- A full clean installation and acceptance using new Notion, Make, ChatGPT and Claude accounts passed on 6 August 2026.
+- All three public MCP workflows passed manual acceptance in both ChatGPT and Claude.
+- The `archive_conversation` V4 Route 1–7 regression run passed on 6 August 2026. The expected MCP/Make response was produced for every route class, and all manual assertions defined by the test procedure were verified and confirmed.
+- The repository validation suite includes 36 installer unit tests, schema and fixture validation, internal-link validation and a publication audit. The same validation sequence runs in GitHub Actions on push and pull request.
 
-For technical review:
+The [V4 regression report](./regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md) records the exact persistence, relation, normalization, precondition and no-change assertions covered by that test run.
 
-1. [`contracts/payload-contract.md`](./contracts/payload-contract.md)
-2. [`schemas/`](./schemas/)
-3. [`examples/public-contracts/`](./examples/public-contracts/)
-4. [`patterns/`](./patterns/)
-5. [`architecture/archive-conversation-flow.md`](./architecture/archive-conversation-flow.md)
+The detailed verification boundaries and acceptance evidence are documented in [`setup/verification.md`](./setup/verification.md).
 
----
+Runtime acceptance belongs to the revision that was actually tested. Local validators and mocked installer tests do not themselves rerun Make, Notion, ChatGPT or Claude, so a later canonical blueprint revision still requires fresh live acceptance before the same runtime claim can be made for that revision.
 
-## What Weft Solves
+## Established retrieval behavior
 
-AI-assisted work often breaks down because useful context stays trapped in temporary places:
+The accepted `get_context` routes are:
 
-- chat histories
-- workflow outputs
-- scattered notes
-- project updates
-- decisions that were not stored properly
+- query;
+- conversation ID;
+- exact date;
+- project.
 
-That creates practical problems:
+Exact-date retrieval requires equal `date_from` and `date_to` values.
 
-- project context has to be reconstructed manually
-- decisions become hard to find
-- follow-up sessions do not reliably build on earlier work
-- outputs are difficult to audit or reuse
-- workflow errors are harder to trace
-- context is not portable across tools or AI clients
+The accepted `search_archive` routes are:
 
-Weft moves important context out of the chat and into an external archive.
+- conversation ID;
+- exact date;
+- date range;
+- project;
+- query.
 
-The AI chat is not the place where the memory lives. The archive is.
+These routes are part of the current public behavior and should not be redesigned as part of installation or rebinding.
 
----
+## Source of truth
 
-## What I Built
+Canonical Make exports live in [`setup/Make/blueprints/`](./setup/Make/blueprints/).
 
-I built a working archive-first system using Make and Notion.
+Their modules, routes, filters and mappings are the implementation source of truth. Source-environment connection, scenario, Data Structure and Notion resource IDs remain in the exports to preserve the canonical scenario structure. The installer resolves the target environment and replaces those bindings in generated candidates without modifying the canonical exports.
 
-The system can:
-
-- archive AI conversations and workflow outputs
-- normalize incoming content into structured payloads
-- store archive records in Notion
-- link records to projects and daily logs
-- search archived work by project, date, query or conversation ID
-- retrieve stored context for follow-up work
-- record workflow errors for later diagnosis
-- separate source content from summaries, metadata and derived views
-
-Make handles orchestration. Notion is the current human-readable system of record.
-
-AI clients and workflow clients can invoke the system if they send the expected payload shape.
-
----
-
-## How It Works
-
-A typical Weft flow:
-
-```text
-AI conversation / workflow output
-↓
-structured payload
-↓
-archive record
-↓
-project relation
-↓
-daily log relation
-↓
-retrievable context
-↓
-continued work
-```
-
-The core flows are:
-
-### 1. Archive Conversation
-
-Stores an AI interaction or workflow output as a structured archive record.
-
-This flow validates incoming data, normalizes message content, creates or updates archive records, links records to projects and daily logs, and returns structured output to the caller.
-
-See: [`architecture/archive-conversation-flow.md`](./architecture/archive-conversation-flow.md)
-
-### 2. Search Archive
-
-Searches existing archive records through defined routes:
-
-- conversation ID
-- project
-- exact date
-- date range
-- query fallback
-
-Search does not rebuild full context. It selects bounded archive candidates.
-
-### 3. Get Context
-
-Retrieves archived content for continued work.
-
-Instead of relying only on AI-client memory, stored context is retrieved from persisted records.
-
----
-
-## System Architecture
-
-![Weft System Overview](diagrams/weft-system-overview.svg)
-
-| Component           | Responsibility                                                                                    | Current implementation                            |
-| ------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| AI / Client Surface | Sends input and receives output                                                                   | ChatGPT, Claude, MCP-enabled invocation, webhooks |
-| Orchestration Layer | Routes workflows, runs scenarios, handles retries and returns output                              | Make                                              |
-| Context Layer       | Shapes payloads, prepares relations, normalizes data and turns stored records into usable context | Make modules, JSON, variables                     |
-| Data Layer          | Stores archive records, project relations, daily logs and error records                           | Notion                                            |
-
-The important boundary is this:
-
-AI clients can invoke Weft, but they do not own the stored context.
-
----
-
-## Design Choices
-
-| Design choice              | Why it matters                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------------- |
-| Archive-first              | Important AI work is stored before it is reused, summarized or promoted elsewhere.    |
-| Client-independent         | ChatGPT and Claude are clients, not the system core.                                  |
-| Stable identifiers         | Duplicate archive records are avoided during retries or repeated workflow calls.      |
-| Explicit payload contracts | Workflow boundaries are easier to inspect, test and correct.                          |
-| Structured error logging   | Failures can be diagnosed later instead of disappearing inside Make run history.      |
-| Notion as MVP storage      | The current storage layer is easy to inspect and useful at this stage of the project. |
-
-Notion is a deliberate MVP trade-off. It is not presented as the best long-term storage backend for every use case.
-
-Make has a rollback mechanism, but it doesn't apply to most Notion actions — if a scenario fails halfway, a partial write can stay in Notion. So I focused on what I could control: clear payloads, stable IDs, explicit routes and visible errors.
-
----
-
-## Evidence in This Repository
-
-You can verify:
-
-- architecture model and workflow boundaries
-- archive conversation flow
-- payload contracts
-- JSON schemas for request and response boundaries
-- example payloads
-- runtime screenshots
-- debugging proof cases
-- reusable workflow patterns
-- known limitations
-
-### Archive-first context flow
-
-![Archive-First Context Flow](diagrams/archive-conversation-flow.svg)
-
-This diagram shows how temporary AI interactions are converted into structured archive records and later retrieved as reusable context.
-
-### Archive workflow run history
-
-![Archive workflow run history](assets/screenshots/make-archive-conversation-run-history.png)
-
-This screenshot shows repeated successful executions of the archive workflow.
-
-Additional screenshots are documented in [`assets/screenshots/README.md`](./assets/screenshots/README.md).
-
-### Runtime proof
-
-The [`proof/`](./proof/) directory documents issues I ran into while building Weft, including:
-
-- search contract stabilization
-- date range filtering
-- multi-result aggregation
-- relation traversal and identifier mapping
-
-These cases show where the workflow broke, what the root cause was and how I corrected it.
-
----
-
-### End-to-End Demo: Cross-Model Context Transfer
-
-This short walkthrough shows the full loop: archiving a conversation from ChatGPT into Notion through the `archive_conversation` scenario, the Make run completing successfully, and Claude retrieving the same archived context through `get_context`.
-
-▶ [Watch the demo](https://youtu.be/980BhT4nMWc)
-
----
-
-## Payload Contracts and Schemas
-
-Weft uses fixed request and response shapes, so each workflow knows what input to expect and what output to return.
-
-The repository includes examples and schemas for:
-
-- archive conversation
-- search archive
-- get context
-
-See:
+The public client contract is defined through:
 
 - [`contracts/payload-contract.md`](./contracts/payload-contract.md)
 - [`schemas/`](./schemas/)
 - [`examples/public-contracts/`](./examples/public-contracts/)
 
----
+## Reproduce Weft
 
-### Validation Tooling
+For a first-time installation, clone or download a clean copy of this repository and follow [`SETUP.md`](./SETUP.md).
 
-I keep a small [`scripts/`](./scripts/) folder with the tooling I use to keep this repository consistent. Both scripts are plain Python with no project-specific logic, so they are not tied to Make, Notion or Weft internals.
+That document is the canonical end-to-end installation guide. The files under [`setup/`](./setup/) provide supporting technical reference material rather than a second installation procedure.
 
-**Schema validation** — checks that the public example payloads still match their JSON Schemas:
+The primary Make provisioning path is the public installer documented in [`installer/README.md`](./installer/README.md). Manual blueprint import followed by per-module rebinding is not the supported end-user installation path.
 
-```powershell
-py .\scripts\validate_examples.py
-```
+The tested local Python runtime is Python 3.13.3. Broader Python-version compatibility has not been established.
 
-```bash
-python3 scripts/validate_examples.py
-```
-
-Install the required Python dependency first if needed:
+Run the repository checks from the repository root:
 
 ```powershell
-py -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python -m unittest discover -s installer/tests -p "test_*.py" -v
+python scripts/validate_examples.py
+python scripts/check_internal_links.py
+python scripts/audit_publication.py
 ```
 
-```bash
-python3 -m pip install -r requirements.txt
-```
+Current platform, installer and export boundaries are documented in [`setup/known-limitations.md`](./setup/known-limitations.md).
 
-This validation checks the documented example payloads against their schemas. It does not validate the full runtime implementation.
+## Repository map
 
-**Internal link check** — scans every Markdown file in the repository and verifies that relative links resolve to a real file. No extra dependencies required:
+| Directory                                  | Responsibility                                                                              |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| [`architecture/`](./architecture/)         | System boundaries, layer model and engineering principles                                   |
+| [`systems/`](./systems/)                   | Write- and read-side implementation documentation and system-local evidence                 |
+| [`contracts/`](./contracts/)               | Public payload behavior                                                                     |
+| [`schemas/`](./schemas/)                   | Request and response JSON Schemas                                                           |
+| [`examples/`](./examples/)                 | Sanitized valid and invalid public-contract fixtures                                        |
+| [`regression-tests/`](./regression-tests/) | Sanitized V4 route fixtures and the canonical `archive_conversation` regression report      |
+| [`installer/`](./installer/)               | Public Make configuration, preflight, provisioning, recovery and read-back verification CLI |
+| [`setup/`](./setup/)                       | Supporting Notion, Make, connection, Data Structure and verification references             |
+| [`scripts/`](./scripts/)                   | Deterministic repository validation and publication checks                                  |
 
-```powershell
-py .\scripts\check_internal_links.py
-```
+Representative runtime-history screenshots are stored with the systems they document:
 
-```bash
-python3 scripts/check_internal_links.py
-```
+* [`systems/archive-conversation/`](./systems/archive-conversation/)
+* [`systems/context-retrieval/`](./systems/context-retrieval/)
 
-I run both before publishing changes to this repository.
+They are historical runtime evidence, not proof of a later clean-account installation.
 
----
+## License
 
-## Pattern Library
-
-The [`patterns/`](./patterns/) directory captures reusable workflow patterns from the implementation.
-
-Examples include:
-
-- explicit existence checks
-- get-or-create upsert
-- idempotent archive writes
-- immutable field guards
-- validation-before-lookup
-- relation identifier mapping
-
-These patterns came from problems I actually encountered while building the system.
-
-They are included because they show how I think about workflow reliability, not because the system is finished or perfect.
-
----
-
-## Scope and Limitations
-
-Weft documents a working private implementation, but this repository is not a deployable open-source package or packaged SaaS product.
-
-Private runtime configuration, credentials, internal identifiers, personal archive content and full Make and Notion setup details are intentionally excluded.
-
-The current implementation uses Make and Notion as an MVP stack, with the trade-offs that come with those choices. Multi-user access, advanced permissioning, high-scale storage and production-grade observability are outside the current scope.
-
-See [`status/known-limitations.md`](./status/known-limitations.md) for the detailed technical boundaries.
-
----
-
-## Trade-Offs
-
-| Decision                       | Benefit                                   | Cost                                 |
-| ------------------------------ | ----------------------------------------- | ------------------------------------ |
-| Archive-first design           | Context becomes easier to trace and reuse | More writes and relations            |
-| Make as orchestration layer    | Fast iteration and visual debugging       | Less flexible than custom code       |
-| Notion as MVP system of record | Human-readable and easy to inspect        | Not designed for high-scale storage  |
-| Explicit routing               | More predictable workflow behavior        | More orchestration logic             |
-| Client-independent inputs      | AI clients remain replaceable             | Requires stricter payload discipline |
-
----
-
-## Repository Map
-
-```text
-.
-├── architecture/          # Architecture model and workflow documentation
-├── assets/screenshots/    # Runtime screenshots with sensitive details omitted
-├── case-studies/          # Applied workflow case studies
-├── contracts/             # Payload contract documentation
-├── diagrams/              # System and workflow diagrams
-├── examples/              # Example payloads
-├── patterns/              # Reusable workflow patterns
-├── proof/                 # Runtime proof and debugging evidence
-├── schemas/               # JSON schemas for payload boundaries
-├── scripts/               # Validation tooling: schema checks and internal link checks
-├── status/                # Known limitations and system status
-├── START-HERE.md
-├── SYSTEM-IN-PRODUCTION.md
-├── requirements.txt
-└── README.md
-```
-
----
-
-## About
-
-Built by **Nadira Büsse**.
-
-LinkedIn: [linkedin.com/in/nadirabusse](https://www.linkedin.com/in/nadirabusse)
-
-I build AI-assisted workflow systems because I want to understand how context, automation and structured records work together in practice.
-
-Weft is one of the projects I use to show how I think and work: I start from a real workflow problem, build a working system, test where it breaks, document the trade-offs, and improve it from there.
+Weft is licensed under the [Apache License 2.0](./LICENSE).

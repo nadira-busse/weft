@@ -1,0 +1,19 @@
+{
+  "conversation_id": "route-v4-test-07-missing-project-conflict",
+  "conversation_title": "Route V4 Test 7 - delta fixture",
+  "project": "Route V4 Delta",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T18:53:00+02:00",
+  "end_time": "2026-08-06T18:58:00+02:00",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Fixture for Route V4 regression test 7."
+    }
+  ],
+  "summary": "Regression test 7 fixture creates a Delta project and archive so the missing-project conflict route can be tested after the Delta project record is removed.",
+  "source": "chat",
+  "source_platform": "chatgpt",
+  "priority": "normal"
+}

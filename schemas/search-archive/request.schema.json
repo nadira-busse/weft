@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nadira-busse/weft/schemas/search-archive/request.schema.json",
+  "title": "search_archive request",
+  "description": "Public request contract derived from the five exported search_archive routes.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "query": { "type": "string", "minLength": 1 },
+    "conversation_id": { "type": "string", "minLength": 1 },
+    "project": { "type": "string", "minLength": 1 },
+    "date_from": { "type": "string", "format": "date" },
+    "date_to": { "type": "string", "format": "date" },
+    "limit": { "type": "integer", "minimum": 1, "default": 10 }
+  },
+  "dependentRequired": {
+    "date_from": ["date_to"],
+    "date_to": ["date_from"]
+  },
+  "anyOf": [
+    { "required": ["query"] },
+    { "required": ["conversation_id"] },
+    { "required": ["project"] },
+    { "required": ["date_from", "date_to"] }
+  ]
+}

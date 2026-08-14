@@ -1,153 +1,189 @@
 # Layer Model
 
-## Overview
+The Layer Model defines the primary responsibility boundaries within Weft.
 
-Weft separates storage, context shaping and workflow execution into three layers.
+Its purpose is not to describe deployment layers or technology stacks. Instead, it separates the concerns of **workflow execution**, **context processing** and **persistent storage** so each part of the system has a clear and limited responsibility.
 
-The goal is to keep responsibilities clear:
-
-* stored records belong in the **Data Layer**
-* transformation belongs in the **Context Layer**
-* workflow execution belongs in the **Orchestration Layer**
-
-This prevents one workflow from silently becoming responsible for everything: storage, logic, routing, retries and context reconstruction.
+These boundaries make the implementation easier to understand, maintain and extend without introducing unnecessary coupling between workflows.
 
 ---
 
-## Model
+# Overview
+
+Weft is organized into three logical layers.
 
 ```text
-Orchestration Layer
-↓
-Context Layer
-↓
-Data Layer
+┌──────────────────────────────┐
+│      Orchestration Layer     │
+├──────────────────────────────┤
+│      Context Layer           │
+├──────────────────────────────┤
+│        Data Layer            │
+└──────────────────────────────┘
 ```
 
-Lower layers are more stable and persistent.
+The layers represent responsibilities rather than technologies.
 
-Upper layers can change more often, as long as they respect the boundaries of the layers below them.
+The current implementation happens to use Make and Notion, but The layers describe responsibilities rather than technology-specific deployment tiers..
 
 ---
 
-## 1. Data Layer
+# Layer Responsibilities
 
-The Data Layer is the archive system of record.
+## Data Layer
 
-It stores structured records such as:
+The Data Layer is the persistent source of record.
 
-* source records — complete archived interactions or workflow outputs
-* curated records — selected reusable knowledge
-* derived records — summaries, metadata and navigation fields
+It stores structured information that must remain available after an AI conversation or workflow has ended.
+
+Current examples include:
+
+- archive records
+- project records
+- daily log records
+- workflow error records
+- record relationships
 
 ### Responsibilities
 
-* store structured records
-* preserve stable identifiers
-* keep relations consistent
-* support retrieval
-* protect stored source content from implicit changes
+- persist structured records
+- maintain stable identifiers
+- preserve relationships
+- support retrieval
+- protect source content from unintended modification
 
-### Invariants
+### Does Not Do
 
-* each record must have a stable identifier
-* source records preserve what happened, but are not automatically canonical knowledge
-* reusable knowledge requires explicit extraction, selection or promotion
-* stored data must not be changed implicitly
-* write behavior must be defined per workflow
+The Data Layer does **not**:
 
-### Current implementation
-
-* Notion archive database
-* Notion project relations
-* Notion daily log relations
-* Notion error log records
+- execute workflows
+- normalize payloads
+- determine routing
+- shape runtime context
+- apply business logic
 
 ---
 
-## 2. Context Layer
+## Context Layer
 
-The Context Layer turns stored records into usable context.
+The Context Layer transforms stored information into a form that workflows and AI clients can use.
 
-It is responsible for shaping data before it is used by a workflow or AI client.
+It sits between orchestration and storage.
+
+Its responsibility is to make data usable without changing the underlying records.
 
 ### Responsibilities
 
-* retrieve structured records
-* normalize data formats
-* shape retrieved archive content for later use
-* enforce expected input and output shapes
+- validate input structures
+- normalize payloads
+- retrieve archive content
+- shape runtime context
+- prepare structured responses
 
-### Invariants
+### Does Not Do
 
-* identical stored input should produce the same context output
-* transformations must be explicit and reproducible
-* context generation must not create or mutate stored records
-* formatting logic does not belong in the Data Layer
+The Context Layer does **not**:
 
-### Current implementation
-
-* Make modules
-* JSON payload shaping
-* Notion block text extraction
-* structured context retrieval for `get_context`
+- store records
+- decide workflow routing
+- own workflow execution
+- modify archive content unless explicitly requested by the workflow
 
 ---
 
-## 3. Orchestration Layer
+## Orchestration Layer
 
-The Orchestration Layer controls workflow execution.
+The Orchestration Layer coordinates the system.
 
-It decides which route runs, which checks happen first and how failures are handled.
+It determines **what happens next**, not **what the stored data means**.
+
+In the current implementation this responsibility is fulfilled by Make workflows.
 
 ### Responsibilities
 
-* trigger workflows
-* route execution
-* handle retries
-* call system operations
-* return structured responses
-* capture execution failures
+- receive requests
+- trigger workflows
+- coordinate execution
+- control routing
+- invoke system operations
+- return structured responses
+- handle operational failures
 
-### Invariants
+### Does Not Do
 
-* execution paths must be explicit
-* retries must not create duplicate archive records
-* workflows must operate on validated inputs
-* orchestration does not own stored data
-* workflow errors must remain observable
+The Orchestration Layer does **not**:
 
-### Current implementation
-
-* Make scenarios
-* MCP-enabled invocation
-* webhook-based execution
-* archive/search/retrieval workflows
+- become the system of record
+- duplicate storage logic
+- reshape archive data directly
+- bypass validation
 
 ---
 
-## Why the Boundaries Matter
+# Responsibility Boundaries
 
-Workflow systems become fragile when responsibilities blur. A workflow should not bypass the Context Layer to reshape stored data informally, and the Context Layer should not silently mutate the Data Layer.
+Each responsibility exists once.
 
-The problems I wanted to avoid were:
+| Responsibility | Owning Layer |
+|---------------|--------------|
+| Workflow execution | Orchestration |
+| Routing | Orchestration |
+| Payload validation | Context |
+| Payload normalization | Context |
+| Runtime context shaping | Context |
+| Archive persistence | Data |
+| Relationship storage | Data |
+| Stable record identity | Data |
 
-* duplicate logic in multiple scenarios
-* hidden data transformations
-* unclear system-of-record boundaries
-* workflow retries creating inconsistent state
-* tightly coupled Make modules that are hard to debug
-* AI clients depending on chat memory instead of stored context
-
-These boundaries keep the system easier to inspect, explain and change.
+Keeping ownership explicit reduces duplicated logic and makes workflow behaviour easier to reason about.
 
 ---
 
-## Related Sections
+# Why These Boundaries Matter
 
-* [Architecture](./README.md)
-* [Archive Conversation Flow](./archive-conversation-flow.md)
-* [Design Principles](./design-principles.md)
-* [System Overview](./system-overview.md)
-* [Patterns](../patterns/)
-* [Proof](../proof/)
+The boundaries are the result of practical implementation experience rather than theoretical design.
+
+Without clear separation, workflow systems gradually become responsible for everything:
+
+- execution
+- validation
+- storage
+- transformation
+- routing
+- retrieval
+
+When these concerns become intertwined, workflows become harder to debug, harder to modify and easier to break.
+
+Separating responsibilities keeps each part of the system focused on a single concern.
+
+---
+
+# Current Implementation
+
+The current implementation maps these responsibilities as follows.
+
+| Responsibility | Current implementation |
+|---------------|------------------------|
+| Workflow orchestration | Make |
+| Context processing | Make modules and structured payload transformations |
+| Persistent storage | Notion |
+
+These technologies are implementation choices rather than architectural requirements.
+
+The responsibility boundaries are documented separately from the current Make and Notion implementation.
+
+---
+
+# Relationship to the Architecture
+
+This document defines **where responsibilities belong**.
+
+The remaining architecture documents answer different questions.
+
+| Question | Document |
+|----------|----------|
+| How does the complete system fit together? | `system-overview.md` |
+| Why were these engineering decisions made? | `engineering-principles.md` |
+| How does a specific system behave? | `systems/` |
+
+Together these documents describe the architecture without duplicating the same explanations across the repository.

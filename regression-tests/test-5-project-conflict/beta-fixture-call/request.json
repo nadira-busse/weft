@@ -1,0 +1,19 @@
+{
+  "conversation_id": "route-v4-test-05-beta-fixture",
+  "conversation_title": "Route V4 Test 5 - beta fixture",
+  "project": "Route V4 Beta",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T18:41:00+02:00",
+  "end_time": "2026-08-06T18:46:00+02:00",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Fixture for Route V4 regression test 5."
+    }
+  ],
+  "summary": "Regression test 5 fixture creates a separate Beta project and archive so the conflict guard can be tested against the existing Alpha archive.",
+  "source": "chat",
+  "source_platform": "chatgpt",
+  "priority": "normal"
+}

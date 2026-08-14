@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nadira-busse/weft/schemas/get-context/request.schema.json",
+  "title": "get_context request",
+  "description": "Public request contract for query, conversation-ID, exact-date, and project retrieval.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "conversation_id": { "type": "string", "minLength": 1 },
+    "project": { "type": "string", "minLength": 1 },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 5,
+      "description": "The exported flow defaults to 5 and rejects non-positive values. It does not enforce the 'max. 20' statement in the input help text."
+    },
+    "date_from": { "type": "string", "format": "date" },
+    "date_to": { "type": "string", "format": "date" },
+    "query": { "type": "string", "minLength": 1 }
+  },
+  "dependentRequired": {
+    "date_from": ["date_to"],
+    "date_to": ["date_from"]
+  },
+  "anyOf": [
+    { "required": ["query"] },
+    { "required": ["conversation_id"] },
+    { "required": ["date_from", "date_to"] },
+    { "required": ["project"] }
+  ]
+}

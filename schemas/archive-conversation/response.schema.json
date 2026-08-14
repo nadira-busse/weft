@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nadira-busse/weft/schemas/archive-conversation/response.schema.json",
+  "title": "archive_conversation response",
+  "description": "Public response contract for success, partial, blocked, validation-error, and error outcomes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "conversation_id"],
+  "properties": {
+    "status": { "type": "string", "enum": ["success", "partial", "blocked", "error"] },
+    "conversation_id": { "type": "string", "minLength": 1 },
+    "record_id": { "type": ["string", "null"], "minLength": 1 },
+    "notion_url": { "type": ["string", "null"], "minLength": 1 },
+    "error_type": { "type": ["string", "null"], "minLength": 1 },
+    "message": { "type": "string" },
+    "module": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "success" } },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["record_id", "notion_url", "message", "module", "timestamp"],
+        "properties": {
+          "record_id": { "type": "string", "minLength": 1 },
+          "notion_url": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "status": { "const": "blocked" } },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["record_id", "notion_url", "error_type", "message", "module", "timestamp"],
+        "properties": {
+          "record_id": { "type": "string", "minLength": 1 },
+          "notion_url": { "type": "string", "minLength": 1 },
+          "error_type": { "const": "PROJECT_CONFLICT" },
+          "message": { "const": "Conversation exists under a different project; request blocked without changes." }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "error_type": { "const": "validation_error" } },
+        "required": ["error_type"]
+      },
+      "then": {
+        "required": ["record_id", "notion_url", "message", "module", "timestamp"],
+        "properties": {
+          "record_id": { "const": null },
+          "notion_url": { "const": null },
+          "message": { "type": "string", "pattern": "^missing or invalid required fields: " },
+          "module": { "const": "validation_router" }
+        }
+      }
+    }
+  ]
+}

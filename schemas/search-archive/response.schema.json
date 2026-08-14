@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nadira-busse/weft/schemas/search-archive/response.schema.json",
+  "title": "search_archive response",
+  "description": "Public response envelope for successful, empty, and validation-error search outcomes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["success", "results_count", "results", "meta", "message"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "results_count": { "type": "number", "minimum": 0 },
+    "results": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/result" }
+    },
+    "meta": { "$ref": "#/$defs/meta" },
+    "message": { "type": "string" }
+  },
+  "$defs": {
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "conversation_id",
+        "title",
+        "project",
+        "summary",
+        "key_insights",
+        "model_origin"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "conversation_id": { "type": "string" },
+        "title": { "type": "string" },
+        "project": { "type": "string" },
+        "summary": { "type": "string" },
+        "key_insights": { "type": "string" },
+        "model_origin": { "type": "string" }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenario", "source"],
+      "properties": {
+        "scenario": { "const": "search_archive" },
+        "source": { "const": "Notion_Archive_Database" }
+      }
+    }
+  }
+}

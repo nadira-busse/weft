@@ -1,0 +1,23 @@
+{
+  "conversation_id": "example-conversation-001",
+  "conversation_title": "Example deployment review",
+  "project": "Weft",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-04T09:10:00Z",
+  "end_time": "2026-08-04T09:25:00Z",
+  "message_count": 2,
+  "messages": [
+    { "role": "user", "content": "Review the sanitized deployment checklist." },
+    { "role": "assistant", "content": "The checklist is ready for local validation." }
+  ],
+  "summary": "A sanitized review of a deployment checklist.",
+  "action_items": "Run the repository validators.",
+  "key_insights": "Bindings must be relinked after import.",
+  "categories": "documentation, validation",
+  "source": "chat",
+  "source_platform": "ChatGPT",
+  "payload_json": "{\"fixture\":true}",
+  "status": "archived",
+  "priority": "Normal",
+  "sentiment": "neutral"
+}

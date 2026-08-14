@@ -1,0 +1,10 @@
+{
+  "status": "blocked",
+  "conversation_id": "route-v4-test-07-missing-project-conflict",
+  "record_id": "00000000-0000-4000-8000-000000000007",
+  "notion_url": "https://example.notion.site/route-v4-test-07-delta-fixture-00000000000040008000000000000007",
+  "error_type": "PROJECT_CONFLICT",
+  "message": "Conversation exists under a different project; request blocked without changes.",
+  "module": "archive_conversation.guard.project_key",
+  "timestamp": "2026-08-06T18:55:50.998+02:00"
+}

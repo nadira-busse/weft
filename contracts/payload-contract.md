@@ -1,98 +1,72 @@
-# Payload Contract
+# Public Payload Contracts
 
-This document describes the request and response boundaries used by Weft archive and retrieval workflows.
+The exported Make `io.input_spec` and `io.output_spec` definitions are the implementation source for these three MCP contracts. JSON Schemas are canonical machine-readable projections under [`../schemas/`](../schemas/); sanitized valid and invalid fixtures are under [`../examples/public-contracts/`](../examples/public-contracts/).
 
-A payload contract defines what a client may send and what a workflow may return.
+## `archive_conversation`
 
-```text
-client input
-↓
-workflow boundary
-↓
-orchestration behavior
-↓
-storage implementation
+Required request fields are `conversation_id`, `conversation_title`, `project`, `extraction_type`, `start_time`, `message_count` and a non-empty `messages` array. Each message contains `role` and `content` text. Optional enrichment fields are `end_time`, `summary`, `action_items`, `key_insights`, `categories`, `source`, `source_platform`, `payload_json`, `status`, `priority` and `sentiment`.
+
+`start_time` and `end_time` accept an ISO datetime or local `HH:mm` value. The exported workflow uses `Europe/Amsterdam` when normalizing local values.
+
+`conversation_id` is trimmed at the deterministic normalization boundary. A value containing only whitespace is invalid and returns `validation_error` before any Notion lookup or write. Successful and blocked responses return that same canonical, trimmed identity.
+
+Archive writes use the normalized title, timestamps, message count, project key, source, platform, extraction type, sentiment, priority, action items, key insights, categories, status and storage payload. Summary remains the supplied summary because the workflow has no separate canonical summary variable. Categories and status retain their exported array handling.
+
+The response exposes `status`, `conversation_id`, `record_id`, `notion_url`, `error_type`, `message`, `module` and `timestamp`. Only `status` and `conversation_id` are required by the public output specification; route-specific fields are optional. Runtime routes use `success`, `partial`, `blocked` and `error` status values.
+
+A conversation ID is canonically bound to one project. When an existing Archive stores a different canonical project key, the request returns `status: blocked`, `error_type: PROJECT_CONFLICT`, the existing Archive `record_id` and `notion_url`, and the exact message `Conversation exists under a different project; request blocked without changes.` The conflict route does not create or recreate a Project, update Archive properties, append page content, create a duplicate Archive, or create an Error Log.
+
+When a requested Project is absent, the workflow searches Archive before creating the Project. A matching existing Archive with no valid Project relation takes the repair route: it recreates the Project once, updates the existing Archive relation, appends the new content, and returns the original Archive identity. A conflicting existing Archive takes the no-write blocked route instead.
+
+Schemas: [`request`](../schemas/archive-conversation/request.schema.json), [`response`](../schemas/archive-conversation/response.schema.json).
+
+## `search_archive`
+
+The request accepts `query`, `conversation_id`, `project`, `date_from`, `date_to` and `limit`. At least one route driver is required. Date searches supply both date fields. The exported default limit is 10 and validation rejects non-positive values.
+
+The five established routes are evaluated for conversation ID, exact date, date range, normalized project and query. Query searches Title, Summary, Full content and Key insights. Date-range upper bounds are calculated in `Europe/Amsterdam`.
+
+The response uses the top-level field `results_count` exactly as exported. Each result contains:
+
+```json
+{
+  "id": "...",
+  "conversation_id": "...",
+  "title": "...",
+  "project": "...",
+  "summary": "...",
+  "key_insights": "...",
+  "model_origin": "..."
+}
 ```
 
-Machine-checkable validation rules are documented in [`../schemas/`](../schemas/).
-Example payloads are documented in [`../examples/public-contracts/`](../examples/public-contracts/).
+Successful and empty lookups return `success: true`; validation envelopes return `success: false`. Both retain `results`, `results_count`, `meta` and `message`.
 
-These contracts do not control every internal behavior of Make or Notion, which retain their own platform constraints.
+Schemas: [`request`](../schemas/search-archive/request.schema.json), [`response`](../schemas/search-archive/response.schema.json).
 
----
+## `get_context`
 
-## Contract Set
+The request accepts `query`, `conversation_id`, `project`, `date_from`, `date_to` and `limit`. It supports four established retrieval modes: query, conversation ID, exact date and normalized project.
 
-Weft documents three request and response contract pairs.
+Exact-date retrieval requires both `date_from` and `date_to`, and the values must be equal. JSON Schema can require the pair but cannot compare their values; the local validator therefore applies an additional semantic equality check. The exported executable flow defaults the limit to 5 and rejects non-positive values. Although its input help mentions a maximum of 20, the flow does not enforce that maximum, so the public schema does not claim one.
 
-| Workflow | Purpose | Request schema | Response schema |
-| --- | --- | --- | --- |
-| Archive Conversation | Capture an interaction or workflow output as an archive record | [`conversation-archive-request.schema.json`](../schemas/archive/conversation-archive-request.schema.json) | [`conversation-archive-response.schema.json`](../schemas/archive/conversation-archive-response.schema.json) |
-| Search Archive | Search archived records through defined filters | [`search-archive-request.schema.json`](../schemas/search/search-archive-request.schema.json) | [`search-archive-response.schema.json`](../schemas/search/search-archive-response.schema.json) |
-| Get Context | Retrieve archived content for continued work | [`get-context-request.schema.json`](../schemas/context/get-context-request.schema.json) | [`get-context-response.schema.json`](../schemas/context/get-context-response.schema.json) |
+Each result contains:
 
-The archive request schema also references the reusable [`message.schema.json`](../schemas/archive/message.schema.json).
+```json
+{
+  "title": "...",
+  "project": "...",
+  "full_content": "...",
+  "message_count": 0,
+  "content_length": 0,
+  "conversation_id": "..."
+}
+```
 
-Corresponding request and response examples are available in [`../examples/public-contracts/`](../examples/public-contracts/).
+The response uses `result_count` (singular), a structured `results` array, `meta`, and a route-specific `message`. Successful routes set `meta.retrieval_mode` to `query`, `conversation_id`, `date` or `project`. Empty results remain successful; invalid input returns `success: false`.
 
----
+Schemas: [`request`](../schemas/get-context/request.schema.json), [`response`](../schemas/get-context/response.schema.json).
 
-## Archive Conversation Contract
+## Validation
 
-The archive conversation contract captures a logical interaction as a structured archive payload.
-
-A public archive request can include:
-
-* stable conversation identifier
-* human-readable title
-* project context
-* extraction type
-* start and end timestamps
-* message count
-* ordered messages
-* optional source metadata
-
-The stable conversation identifier acts as the primary idempotency key for the archive workflow.
-
-This allows retries or repeated workflow calls to converge on the same logical archive record when the workflow uses an existence-first write model.
-
-The archive response confirms what happened after the archive request was accepted and stored. It does not repeat the full archived content.
-
----
-
-## Shared Retrieval Request Rules
-
-Both `search_archive` and `get_context` accept these retrieval criteria:
-
-* conversation ID
-* project
-* query
-* date range
-
-Both requests also support a `limit` field to control the maximum number of returned results.
-
-When `date_from` and `date_to` are equal, the request is treated as an exact-date operation.
-
-Requests are rejected when `date_from` is later than `date_to`.
-
----
-
-## Search Archive Contract
-
-The search archive contract returns record summaries that match the supplied filters.
-
-It is used to discover candidate archive records and does not return the full archived content.
-
----
-
-## Get Context Contract
-
-The get context contract returns stored archive content for continued work.
-
-The `limit` field has a maximum value of 20.
-
-The response follows the working system shape: retrieved Notion page text is returned as ordered `clean_text` items. Some `clean_text` items may be empty because they reflect empty or structural Notion blocks.
-
-This block-based response shape is intentional. Weft stores long archive content across Notion page blocks because Notion property text storage is limited. The `get_context` workflow retrieves those stored blocks and returns them as ordered `clean_text` items, so longer archived content remains accessible.
-
-Example content may be shortened for readability.
+Run `python scripts/validate_examples.py` from the repository root. It checks all six schemas, every registered public fixture, all seven current Archive V4 regression suites and their JSON fixtures, expected invalid fixtures, exact-date equality, and the two exported output-spec result structures. The canonical regression evidence is the [V4 regression report](../regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md).

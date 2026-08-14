@@ -1,0 +1,8 @@
+{
+  "conversation_id": "example-conversation-invalid",
+  "conversation_title": "Invalid fixture",
+  "project": "Weft",
+  "extraction_type": "conversation",
+  "start_time": "09:10",
+  "message_count": 1
+}

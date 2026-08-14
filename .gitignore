@@ -14,6 +14,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.py[cod]
 .pytest_cache/
 .venv/
 venv/
@@ -39,6 +40,17 @@ tmp/
 # Archives
 *.zip
 
-# Local working notes
+# Local working files
 to-do-later/
+.private/
 
+# Local agent workspace
+.agent-private/
+
+# Local public-installer state and ID-bearing reports
+.weft-installer/
+
+# Local credentials and generated private state
+credentials.json
+*.token
+*.secret

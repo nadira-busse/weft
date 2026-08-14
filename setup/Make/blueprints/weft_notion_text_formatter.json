@@ -1,0 +1,268 @@
+{
+    "name": "weft_notion_text_formatter",
+    "flow": [
+        {
+            "id": 1,
+            "module": "scenario-service:StartSubscenario",
+            "version": 2,
+            "parameters": {},
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": -68,
+                    "y": 0,
+                    "name": "Receive text fragments"
+                },
+                "restore": {},
+                "interface": [
+                    {
+                        "help": "Combines prepared text fragments into one plain-text output.\n\nThis scenario receives an ordered array of `clean_text` values, preserves their incoming order, joins them with newline separators, and returns the result as `full_text`.\n\nIt does not search, summarize, interpret, reorder, or modify the supplied text content.\n\nUsed as a deterministic text-aggregation utility by the context-retrieval workflow.",
+                        "name": "items_get_context",
+                        "spec": {
+                            "spec": [
+                                {
+                                    "help": "",
+                                    "name": "clean_text",
+                                    "type": "text",
+                                    "label": "",
+                                    "default": "",
+                                    "required": false,
+                                    "multiline": true
+                                }
+                            ],
+                            "type": "collection",
+                            "required": false
+                        },
+                        "type": "array",
+                        "label": "",
+                        "required": false
+                    }
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "module": "builtin:BasicFeeder",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "array": "{{1.items_get_context}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 267,
+                    "y": 20,
+                    "name": "Iterate text fragments"
+                },
+                "restore": {
+                    "expect": {
+                        "array": {
+                            "mode": "edit"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "mode": "edit",
+                        "name": "array",
+                        "spec": [],
+                        "type": "array",
+                        "label": "Array"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "module": "util:TextAggregator",
+            "version": 1,
+            "parameters": {
+                "feeder": 8,
+                "rowSeparator": "\n"
+            },
+            "mapper": {
+                "value": "{{8.clean_text}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 567,
+                    "y": 20,
+                    "name": "Aggregate clean text"
+                },
+                "restore": {
+                    "extra": {
+                        "feeder": {
+                            "label": "Iterator [8]"
+                        }
+                    },
+                    "parameters": {
+                        "rowSeparator": {
+                            "label": "New row"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "rowSeparator",
+                        "type": "select",
+                        "label": "Row separator",
+                        "validate": {
+                            "enum": [
+                                "\n",
+                                "\t",
+                                "other"
+                            ]
+                        }
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Text"
+                    }
+                ],
+                "advanced": true
+            }
+        },
+        {
+            "id": 7,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "full_text",
+                "scope": "roundtrip",
+                "value": "{{9.text}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 867,
+                    "y": 20,
+                    "name": "Set full text"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "full_text",
+                        "type": "any",
+                        "label": "full_text"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "module": "scenario-service:ReturnData",
+            "version": 2,
+            "parameters": {},
+            "mapper": {
+                "full_text": "{{7.full_text}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1138,
+                    "y": 7,
+                    "name": "Return formatted text"
+                },
+                "restore": {},
+                "expect": [
+                    {
+                        "name": "full_text",
+                        "type": "text",
+                        "label": ""
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com",
+        "notes": []
+    },
+    "io": {
+        "input_spec": [
+            {
+                "help": "Combines prepared text fragments into one plain-text output.\n\nThis scenario receives an ordered array of `clean_text` values, preserves their incoming order, joins them with newline separators, and returns the result as `full_text`.\n\nIt does not search, summarize, interpret, reorder, or modify the supplied text content.\n\nUsed as a deterministic text-aggregation utility by the context-retrieval workflow.",
+                "name": "items_get_context",
+                "spec": {
+                    "spec": [
+                        {
+                            "help": "",
+                            "name": "clean_text",
+                            "type": "text",
+                            "label": "",
+                            "default": "",
+                            "required": false,
+                            "multiline": true
+                        }
+                    ],
+                    "type": "collection",
+                    "required": false
+                },
+                "type": "array",
+                "label": "",
+                "required": false
+            }
+        ],
+        "output_spec": [
+            {
+                "help": "",
+                "name": "full_text",
+                "type": "text",
+                "label": "",
+                "default": "",
+                "required": false,
+                "multiline": false
+            }
+        ]
+    }
+}

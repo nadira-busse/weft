@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nadira-busse/weft/schemas/get-context/response.schema.json",
+  "title": "get_context response",
+  "description": "Public response envelope for successful, empty, and validation-error retrieval outcomes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["success", "result_count", "results", "meta", "message"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "result_count": { "type": "number", "minimum": 0 },
+    "results": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/result" }
+    },
+    "meta": { "$ref": "#/$defs/meta" },
+    "message": { "type": "string" }
+  },
+  "$defs": {
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "project",
+        "full_content",
+        "message_count",
+        "content_length",
+        "conversation_id"
+      ],
+      "properties": {
+        "title": { "type": "string" },
+        "project": { "type": "string" },
+        "full_content": { "type": "string" },
+        "message_count": { "type": "number", "minimum": 0 },
+        "content_length": { "type": "number", "minimum": 0 },
+        "conversation_id": { "type": "string" }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenario", "source"],
+      "properties": {
+        "scenario": { "const": "get_context" },
+        "source": { "const": "Notion_Archive_Database" },
+        "retrieval_mode": {
+          "type": "string",
+          "enum": ["query", "conversation_id", "date", "project"]
+        }
+      }
+    }
+  }
+}

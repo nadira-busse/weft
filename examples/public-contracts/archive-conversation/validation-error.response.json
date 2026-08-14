@@ -1,0 +1,10 @@
+{
+  "status": "error",
+  "conversation_id": "missing",
+  "record_id": null,
+  "notion_url": null,
+  "error_type": "validation_error",
+  "message": "missing or invalid required fields: conversation_id",
+  "module": "validation_router",
+  "timestamp": "2026-08-04T09:25:39+02:00"
+}

@@ -1,0 +1,19 @@
+{
+  "conversation_id": "route-v4-test-06-missing-project-matching-archive",
+  "conversation_title": "Route V4 Test 6 - gamma fixture",
+  "project": "Route V4 Gamma",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T18:46:00+02:00",
+  "end_time": "2026-08-06T18:51:00+02:00",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Fixture for Route V4 regression test 6."
+    }
+  ],
+  "summary": "Regression test 6 fixture creates a Gamma project and archive so the missing-project recovery route can be tested after the project record is removed.",
+  "source": "chat",
+  "source_platform": "chatgpt",
+  "priority": "normal"
+}

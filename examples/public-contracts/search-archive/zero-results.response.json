@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "results_count": 0,
+  "results": [],
+  "meta": {
+    "scenario": "search_archive",
+    "source": "Notion_Archive_Database"
+  },
+  "message": "Archive lookup completed by query."
+}

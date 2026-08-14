@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "conversation_id": "route-v4-test-07-missing-project-conflict",
+  "record_id": "00000000-0000-4000-8000-000000000007",
+  "notion_url": "https://example.notion.site/route-v4-test-07-delta-fixture-00000000000040008000000000000007",
+  "error_type": null,
+  "message": "archived",
+  "module": "archive_conversation",
+  "timestamp": "2026-08-06T18:53:18.461+02:00"
+}

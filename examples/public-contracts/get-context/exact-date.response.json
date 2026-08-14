@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "result_count": 1,
+  "results": [
+    {
+      "title": "Example deployment review",
+      "project": "weft",
+      "full_content": "USER: Review the sanitized deployment checklist.",
+      "message_count": 2,
+      "content_length": 48,
+      "conversation_id": "example-conversation-001"
+    }
+  ],
+  "meta": {
+    "scenario": "get_context",
+    "source": "Notion_Archive_Database",
+    "retrieval_mode": "date"
+  },
+  "message": "Context retrieval completed for the specified date."
+}

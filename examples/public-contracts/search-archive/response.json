@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "results_count": 1,
+  "results": [
+    {
+      "id": "example-record-001",
+      "conversation_id": "example-conversation-001",
+      "title": "Example deployment review",
+      "project": "weft",
+      "summary": "A sanitized review of a deployment checklist.",
+      "key_insights": "Bindings must be relinked after import.",
+      "model_origin": "ChatGPT"
+    }
+  ],
+  "meta": {
+    "scenario": "search_archive",
+    "source": "Notion_Archive_Database"
+  },
+  "message": "Archive lookup completed by query."
+}

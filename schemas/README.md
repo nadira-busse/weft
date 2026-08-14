@@ -1,26 +1,9 @@
-# Schemas
+# Public JSON Schemas
 
-This directory contains JSON Schemas for the documented Weft request and response boundaries.
+The three public MCP scenarios use one request schema and one response schema each:
 
-The schemas define the minimum machine-checkable structure for each contract and are used to verify required fields, field types and alignment with the public examples.
+- [`archive-conversation/`](./archive-conversation/)
+- [`search-archive/`](./search-archive/)
+- [`get-context/`](./get-context/)
 
----
-
-## Available Schemas
-
-| Workflow | Schema | Purpose |
-| --- | --- | --- |
-| Archive Conversation | [`archive/conversation-archive-request.schema.json`](./archive/conversation-archive-request.schema.json) | Request boundary for `archive_conversation` |
-| Archive Conversation | [`archive/conversation-archive-response.schema.json`](./archive/conversation-archive-response.schema.json) | Response boundary for `archive_conversation` |
-| Archive Conversation | [`archive/message.schema.json`](./archive/message.schema.json) | Message item used by the archive request |
-| Search Archive | [`search/search-archive-request.schema.json`](./search/search-archive-request.schema.json) | Request boundary for `search_archive` |
-| Search Archive | [`search/search-archive-response.schema.json`](./search/search-archive-response.schema.json) | Response boundary for `search_archive` |
-| Get Context | [`context/get-context-request.schema.json`](./context/get-context-request.schema.json) | Request boundary for `get_context` |
-| Get Context | [`context/get-context-response.schema.json`](./context/get-context-response.schema.json) | Response boundary for `get_context` |
-
----
-
-## Related
-
-* [`../contracts/payload-contract.md`](../contracts/payload-contract.md)
-* [`../examples/public-contracts/`](../examples/public-contracts/)
+These schemas describe client payloads. They are separate from Make Data Structures and from the public input/output specifications embedded in exported scenarios. Run `python scripts/validate_examples.py` from the repository root to validate the schemas, public examples, all seven current Archive V4 regression suites and their JSON fixtures, and blueprint output specifications. The canonical regression evidence is the [V4 regression report](../regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md).

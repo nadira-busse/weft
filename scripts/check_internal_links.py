@@ -26,7 +26,9 @@ ROOT = Path(__file__).resolve().parents[1]
 LINK_PATTERN = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 
 EXCLUDED_DIRS = {
+    ".agent-private",
     ".git",
+    ".private",
     ".venv",
     "venv",
     "node_modules",

@@ -1,0 +1,19 @@
+{
+  "conversation_id": "route-v4-test-03-existing-project-new-archive",
+  "conversation_title": "Route V4 Test 3 - existing project and new archive",
+  "project": "Route V4 Alpha",
+  "extraction_type": "conversation",
+  "start_time": "2026-08-06T18:26:00+02:00",
+  "end_time": "2026-08-06T18:31:00+02:00",
+  "message_count": 1,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Manual archive_conversation route V4 regression test 3."
+    }
+  ],
+  "summary": "Regression test 3 verifies that an existing project is reused while a new archive record is created and linked correctly.",
+  "source": "chat",
+  "source_platform": "chatgpt",
+  "priority": "highNormalHigh"
+}
