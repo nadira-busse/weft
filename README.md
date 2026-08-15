@@ -1,5 +1,7 @@
 # Weft
 
+[![Validate](https://github.com/nadira-busse/weft/actions/workflows/validate.yml/badge.svg)](https://github.com/nadira-busse/weft/actions/workflows/validate.yml)
+
 Weft started with a recurring problem in my own AI work: important project context was spread across conversations, and continuing work elsewhere often meant rebuilding part of that context first. I began storing selected conversations, decisions and workflow output as structured records that I could search and retrieve later.
 
 The AI landscape has changed since then. Project memory, past-chat retrieval and persistent context are now much more capable in mainstream AI products. That changed the reason for publishing Weft. It is not intended to replace the memory features of a specific AI client. Instead, this repository shows how an explicit archive-and-retrieval layer can be built, inspected, tested and reproduced independently of a model's internal memory behavior.
