@@ -16,7 +16,7 @@ When reporting a vulnerability, include where possible:
 
 ## Project scope
 
-Weft is a public MIT-licensed reference implementation and portfolio project.
+Weft is a public Apache-2.0-licensed reference implementation and portfolio project.
 
 It is not operated as a hosted production service for third-party users.
 

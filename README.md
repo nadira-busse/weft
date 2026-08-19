@@ -4,7 +4,9 @@
 
 Weft started with a recurring problem in my own AI work: important project context was spread across conversations, and continuing work elsewhere often meant rebuilding part of that context first. I began storing selected conversations, decisions and workflow output as structured records that I could search and retrieve later.
 
-The AI landscape has changed since then. Project memory, past-chat retrieval and persistent context are now much more capable in mainstream AI products. That changed the reason for publishing Weft. It is not intended to replace the memory features of a specific AI client. Instead, this repository shows how an explicit archive-and-retrieval layer can be built, inspected, tested and reproduced independently of a model's internal memory behavior.
+The AI landscape has changed since then. Project memory, past-chat retrieval and persistent context are now much more capable in mainstream AI products. Weft remains valuable because it makes the context layer explicit: conversations, decisions and workflow output are stored in a system that can be inspected, queried, tested and reproduced independently of any single AI client.
+
+As a portfolio project, Weft shows how I design AI workflow infrastructure with clear orchestration, structured storage, retrieval, explicit contracts and traceable behavior.
 
 Technically, Weft is an archive-first reference implementation built with Make, Notion and MCP-enabled AI clients. Make handles orchestration, Notion is the human-readable source of record, and three public workflows provide archive, search and context-retrieval operations.
 
@@ -34,7 +36,7 @@ The recorded evidence for the current public implementation includes:
 - A full clean installation and acceptance using new Notion, Make, ChatGPT and Claude accounts passed on 6 August 2026.
 - All three public MCP workflows passed manual acceptance in both ChatGPT and Claude.
 - The `archive_conversation` V4 Route 1–7 regression run passed on 6 August 2026. The expected MCP/Make response was produced for every route class, and all manual assertions defined by the test procedure were verified and confirmed.
-- The repository validation suite includes 36 installer unit tests, schema and fixture validation, internal-link validation and a publication audit. The same validation sequence runs in GitHub Actions on push and pull request.
+- The repository validation suite includes installer unit tests, schema and fixture validation, internal-link validation and a publication audit. The same validation sequence runs in GitHub Actions on push and pull request.
 
 The [V4 regression report](./regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md) records the exact persistence, relation, normalization, precondition and no-change assertions covered by that test run.
 

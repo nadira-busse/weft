@@ -13,6 +13,32 @@
 - stale exported public interface metadata can occur
 - UI-visible AI-provider connection remains manual
 
+### Make MCP archive rejection for Markdown-formatted `python -m` commands
+
+A reproducible interoperability issue has been observed when
+`archive_conversation` is invoked through Make MCP at `https://mcp.make.com`.
+
+Archive requests containing a `python -m ...` command formatted as Markdown
+code can be rejected with HTTP `403 Forbidden` before the
+`archive_conversation` scenario starts. In that case, no execution appears in
+Make Scenario History.
+
+The verified workaround is to preserve the command text unchanged, remove only
+the Markdown code formatting around the affected `python -m ...` command, and
+retry the archive request.
+
+The behavior has been reproduced in controlled tests and in multiple real
+archive requests. Previously rejected full archives completed successfully
+after applying the workaround, and exact retrieval by `conversation_id` also
+passed.
+
+See
+[`../systems/archive-conversation/troubleshooting/make-mcp-403-markdown-python-module-command.md`](../systems/archive-conversation/troubleshooting/make-mcp-403-markdown-python-module-command.md)
+for diagnosis steps, reproduction evidence, and an AI-assisted troubleshooting
+prompt.
+
+The underlying Make MCP gateway rule has not been established.
+
 ## Installation and recovery boundaries
 
 - installation is not zero-touch because platform authorization remains manual

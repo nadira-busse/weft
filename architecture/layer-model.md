@@ -24,7 +24,7 @@ Weft is organized into three logical layers.
 
 The layers represent responsibilities rather than technologies.
 
-The current implementation happens to use Make and Notion, but The layers describe responsibilities rather than technology-specific deployment tiers..
+The current implementation uses Make and Notion, but the layer boundaries are technology-independent.
 
 ---
 
