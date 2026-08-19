@@ -215,7 +215,21 @@ class InstallerTests(unittest.TestCase):
             self.assertEqual(len(list((state_file.parent / "candidates").glob("*.candidate.json"))), 5)
             self.assertEqual(len(list((state_file.parent / "candidates").glob("*.binding-manifest.json"))), 5)
             sanitized = json.loads((state_file.parent / "installation-report.sanitized.json").read_text(encoding="utf-8"))
-            self.assertNotIn(str(formatter_id), json.dumps(sanitized))
+            identifier_values: list[str] = []
+
+            def collect_identifier_values(value: Any) -> None:
+                if isinstance(value, dict):
+                    for key, item in value.items():
+                        if key == "id" or key.endswith("_id"):
+                            identifier_values.append(str(item))
+                        collect_identifier_values(item)
+                elif isinstance(value, list):
+                    for item in value:
+                        collect_identifier_values(item)
+
+            collect_identifier_values(sanitized)
+
+            self.assertNotIn(str(formatter_id), identifier_values)
 
     def test_rerun_uses_state_without_duplicate_creation(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

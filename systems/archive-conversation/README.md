@@ -2,6 +2,8 @@
 
 `archive_conversation` is Weft's public write contract. It validates a structured conversation, normalizes timestamps and metadata, resolves Daily Log and Projects relations, checks stable `conversation_id` identity, and then creates or updates one Archive record.
 
+You can inspect the published workflow directly in Make: [`archive_conversation`](https://eu1.make.com/public/shared-scenario/UrKrdWWmdo8/weft-archive-conversation).
+
 ## Implemented flow
 
 ```text

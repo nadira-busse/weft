@@ -7,6 +7,12 @@ The read side of Weft consists of two public MCP scenarios.
 
 `get_context` calls the internal `weft_notion_text_formatter` scenario after listing Notion page content. The exported `slice(...; 2; 3)` expression selects the established subset of page-content bundles passed to the formatter before full-content assembly. It remains an implementation detail because the resulting selection and assembly behavior has been accepted in client testing; it is not part of the public request or response contract.
 
+The published Make workflows can be inspected directly:
+
+- [`search_archive`](https://eu1.make.com/public/shared-scenario/kMLUtxQJb2L/weft-search-archive)
+- [`get_context`](https://eu1.make.com/public/shared-scenario/vH1RABSc2t1/weft-get-context)
+- [`notion_text_formatter`](https://eu1.make.com/public/shared-scenario/CxwoCdhvFcx/weft-notion-text-formatter)
+
 ## Contract behavior
 
 Both scenarios return structured arrays, route-specific messages, explicit counts, empty-result envelopes and `success: false` validation responses. Search results use `key_insights` and `model_origin`; full-context results add title, project, full content, message count, content length and conversation ID.

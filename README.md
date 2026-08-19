@@ -25,6 +25,20 @@ Two additional workflows support the implementation:
 - `weft_notion_text_formatter` is an internal deterministic child workflow used by `get_context`.
 - `weft_create_daily_log` is an optional scheduled summary workflow and is not part of the public MCP contract.
 
+## Inspect the workflows in Make
+
+The Weft scenarios are also available as public Make scenario pages. These pages let you inspect the actual workflows in Make and use Make's native **Use this scenario** flow when you want to reuse an individual scenario.
+
+- [`archive_conversation`](https://eu1.make.com/public/shared-scenario/UrKrdWWmdo8/weft-archive-conversation)
+- [`search_archive`](https://eu1.make.com/public/shared-scenario/kMLUtxQJb2L/weft-search-archive)
+- [`get_context`](https://eu1.make.com/public/shared-scenario/vH1RABSc2t1/weft-get-context)
+- [`notion_text_formatter`](https://eu1.make.com/public/shared-scenario/CxwoCdhvFcx/weft-notion-text-formatter)
+- [`create_daily_log`](https://eu1.make.com/public/shared-scenario/HXO6dZj0Leo/weft-create-daily-log)
+
+The public scenario pages are useful for direct inspection and selective reuse. A copied scenario still requires environment-specific connections, Notion resources, Data Structures and, where applicable, scenario dependencies to be configured in the target Make environment.
+
+For a complete Weft installation, use the reproducible installer path documented in [`SETUP.md`](./SETUP.md).
+
 ## What is reproducible
 
 Weft is published as a reference implementation rather than a zero-touch deployment package.
