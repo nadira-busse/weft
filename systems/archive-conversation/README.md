@@ -1,50 +1,91 @@
-# Archive Conversation System
+# Archive Conversation
 
-`archive_conversation` is Weft's public write contract. It validates a structured conversation, normalizes timestamps and metadata, resolves Daily Log and Projects relations, checks stable `conversation_id` identity, and then creates or updates one Archive record.
+Archive Conversation is Weft's write path. It receives a structured conversation from an MCP-enabled client, normalizes and validates the input, and stores the result as an Archive record in Notion.
 
-You can inspect the published workflow directly in Make: [`archive_conversation`](https://eu1.make.com/public/shared-scenario/UrKrdWWmdo8/weft-archive-conversation).
+The workflow also maintains the relationship between an Archive, its Project and the relevant Daily Log. This document explains how that write path works, how an existing conversation is identified, and when Weft updates, repairs or rejects a request.
 
-## Implemented flow
+What began as a workflow for storing conversations became more complicated once the same conversation could be archived again. A repeated request should update the existing Archive, while a request that assigns the same conversation to another project must be rejected without changing stored state.
+
+[Inspect `archive_conversation` in Make](https://eu1.make.com/public/shared-scenario/UrKrdWWmdo8/weft-archive-conversation)
+
+The exported blueprint is stored at [`setup/Make/blueprints/weft_archive_conversation.json`](../../setup/Make/blueprints/weft_archive_conversation.json).
+
+## The write boundary
+
+The implemented order is:
 
 ```text
-public input
-→ deterministic normalization
-→ required-field validation
-→ transcript and storage-payload assembly
-→ Daily Log lookup/create
-→ Project lookup
-→ if Project is missing, search Archive before Project creation
-→ apply the stored-project-key conflict guard
-→ create, reuse, or repair Project only when permitted
-→ create or update the selected Archive record
-→ append full page content
-→ structured response
+input
+
+→ normalize conversation ID, timestamps and metadata
+
+→ validate normalized values
+
+→ assemble transcript and storage payload
+
+→ resolve Daily Log and Project records
+
+→ check the stored conversation and project identity
+
+→ create, update or repair only on an allowed route
+
+→ append the persisted page content
+
+→ return the response
 ```
 
-The scenario uses `Europe/Amsterdam` for local-time normalization. Module 62 is the deterministic canonical boundary; validation uses its trimmed conversation ID before any Notion operation. A whitespace-only ID therefore returns `validation_error` without a lookup or write.
+Normalization happens before any Notion operation.
 
-A conversation ID is bound to one canonical project key. If the same ID is requested with a different key, the workflow returns `PROJECT_CONFLICT` with the existing Archive identity and makes no Project, Archive, page-content, or Error Log change. If the requested Project is absent but an existing Archive has the same key and no valid Project relation, the repair route recreates the Project once and updates that existing Archive relation.
+Normalization trims `conversation_id`; a whitespace-only value therefore returns `validation_error` without a Notion lookup or write.
 
-The public request and response are defined in [`../../contracts/payload-contract.md`](../../contracts/payload-contract.md), [`../../schemas/archive-conversation/`](../../schemas/archive-conversation/) and [`../../examples/public-contracts/archive-conversation/`](../../examples/public-contracts/archive-conversation/). A focused engineering note documents how the current datetime boundary emerged from parsing, validation, explicit `end_time`, and timezone defects: [`engineering-notes/datetime-normalization-and-timezone.md`](./engineering-notes/datetime-normalization-and-timezone.md).
+Datetimes are also converted before validation instead of requiring every accepted client representation to already use the stored datetime format.
 
-> **Known Make MCP interoperability issue:** archive requests containing
-> Markdown-formatted `python -m ...` commands can be rejected with HTTP 403
-> before this scenario executes.
->
-> See
-> [`troubleshooting/make-mcp-403-markdown-python-module-command.md`](./troubleshooting/make-mcp-403-markdown-python-module-command.md)
-> for the verified diagnosis and workaround.
+The request and response fields are defined in the [payload contract](../../contracts/payload-contract.md), [JSON Schemas](../../schemas/archive-conversation/) and [sanitized fixtures](../../examples/contracts/archive-conversation/). This document describes the write behavior behind those payloads rather than repeating the contract.
 
-## Evidence boundary
+## One conversation, one project identity
 
-The screenshot below shows Make run-history evidence for this scenario. The Notion screenshot shows persisted records from the same workflow. The current Route 1–7 record is the [V4 regression report](../../regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md). It records the expected MCP/Make response and confirms every manual assertion defined by the test procedure for all seven route classes on 6 August 2026, including the prepared preconditions for Tests 6 and 7. The confirmation is limited to the listed assertions and does not prove every theoretically possible side effect, fresh provisioning, or live execution of a later canonical blueprint revision.
+`conversation_id` is the stable Archive identity.
 
-![Archive Conversation run history](./assets/screenshots/make-archive-conversation-run-history.png)
+A new ID takes the create route. A repeated accepted request finds the existing Archive and takes the update route, so both requests use the same record.
 
-![Notion archive database](./assets/screenshots/notion-archive-db-evidence-view.png)
+That reuse is allowed only while the normalized project key still matches the stored key.
 
-The canonical blueprint is [`../../setup/Make/blueprints/weft_archive_conversation.json`](../../setup/Make/blueprints/weft_archive_conversation.json). The end-to-end installation flow is documented in [`../../SETUP.md`](../../SETUP.md); supporting provisioning and rebinding references are under [`../../setup/`](../../setup/).
+A request that tries to bind the same conversation to another project returns `PROJECT_CONFLICT`. On that route, the scenario does not create or update a Project, Archive, page content or Error Log record. The existing Archive identity is returned so the caller can see which record caused the conflict.
 
-## Scope
+A missing Project record is handled separately from a conflict.
 
-This system does not search or retrieve context. Those responsibilities belong to [`../context-retrieval/`](../context-retrieval/). Automated merge, semantic deduplication, version history and multi-user conflict resolution are outside the published implementation.
+If an Archive already contains the same project key but no longer has a valid Project relation, the repair route recreates the Project once and attaches the existing Archive to it. It does not create another Archive merely because the related Project record disappeared.
+
+Repeating an accepted archive request with the same `conversation_id` reuses the existing Archive record instead of creating another one. Existing page content is not overwritten: content from the new request is appended below it. Weft does not currently detect whether those appended blocks duplicate content that is already present.
+
+## What failed around datetime handling
+
+The input accepts either an ISO 8601 datetime or a local `HH:mm` value.
+
+The first implementation treated those forms inconsistently:
+
+* A value such as `06:00` reached Make's date parser without a calendar date.
+* After parsing was corrected, validation still inspected the raw client value and rejected a supported `HH:mm` input.
+* An explicit `end_time` could be replaced by the later workflow execution time.
+* One attempted mapping depended on another output from the same Make module, even though that output did not exist until the module completed.
+* The installation timezone appeared in several expressions, leaving more than one place to change it.
+
+The corrected path builds a complete local datetime before parsing, validates the normalized result and preserves a supplied `end_time`.
+
+Only a missing end time uses the current archive time.
+
+An upstream `weft_timezone` variable supplies the installation timezone to normalization and Daily Log date derivation. The supplied blueprint sets this value to `Europe/Amsterdam`.
+
+The `Europe/Amsterdam` configuration was runtime-tested, including the normalization assertions recorded in the V4 regression run. Equivalent runtime testing has not been performed for every other IANA timezone.
+
+There is also an information boundary the workflow cannot repair. `06:00` contains no historical date. When a conversation is archived on a later day, the caller must provide at least a dated `start_time`; an `HH:mm` end time can then inherit that known date.
+
+## Evidence and limits
+
+The [V4 regression report](../../regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md) records the responses and Notion assertions tested for seven Archive routes on 6 August 2026. Those results apply to the behavior tested in that regression run.
+
+The stored [Make run-history screenshot](./assets/screenshots/make-archive-conversation-run-history.png) and [Notion Archive screenshot](./assets/screenshots/notion-archive-db-evidence-view.png) are representative runtime evidence. They show that the workflow ran and persisted records; screenshots alone do not prove every regression route.
+
+Archive requests containing Markdown-formatted `python -m ...` commands can receive HTTP 403 before this scenario starts. The reproduced behavior and workaround are documented in the [Make MCP troubleshooting note](./troubleshooting/make-mcp-403-markdown-python-module-command.md).
+
+Current installation and platform boundaries are documented in [Known limitations](../../setup/known-limitations.md).

@@ -46,6 +46,7 @@ to-do-later/
 
 # Local agent workspace
 .agent-private/
+AGENTS.md
 
 # Local public-installer state and ID-bearing reports
 .weft-installer/

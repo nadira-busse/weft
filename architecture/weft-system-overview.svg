@@ -1,77 +1,448 @@
-<svg width="680" height="800" viewBox="0 0 680 800" xmlns="http://www.w3.org/2000/svg">
-<defs>
-  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-    <path d="M2 1L8 5L2 9" fill="none" stroke="#378ADD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  </marker>
-  <style>
-    text { 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    .th { font-size: 14px; font-weight: 500; fill: #1a1a1a; }
-    .ts { font-size: 12px; font-weight: 400; fill: #666; }
-  </style>
-</defs>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">Weft runtime overview</title>
+  <desc id="desc">ChatGPT and Claude connect through Make MCP to archive, search and retrieve conversations stored in Notion.</desc>
 
-<!-- Background -->
-<rect width="680" height="800" fill="#ffffff"/>
+  <defs>
+    <style>
+      .bg { fill:#f7f8fa; }
+      .heading { font:700 32px Arial,sans-serif; fill:#0f2344; }
+      .subtitle { font:16px Arial,sans-serif; fill:#445675; }
+      .column { font:700 13px Arial,sans-serif; letter-spacing:1.8px; fill:#344a70; }
+      .box-title { font:700 17px Arial,sans-serif; fill:#091b39; }
+      .mono { font:700 15px Arial,sans-serif; fill:#091b39; }
+      .body { font:14px Arial,sans-serif; fill:#40516d; }
+      .small { font:12px Arial,sans-serif; fill:#40516d; }
+      .route-label { font:12px Arial,sans-serif; fill:#314460; }
 
-<!-- Title -->
-<text class="th" x="340" y="32" text-anchor="middle">Weft System Overview</text>
-<text class="ts" x="340" y="50" text-anchor="middle">Archive-First Architecture for Deterministic AI Workflows</text>
+      .client-shell {
+        fill:#fff;
+        stroke:#c8d3e2;
+        stroke-width:1.6;
+      }
 
-<!-- Box 1: AI Clients -->
-<rect x="100" y="60" width="480" height="100" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
-<text class="th" x="340" y="85" text-anchor="middle" dominant-baseline="central">AI Clients</text>
-<text class="ts" x="340" y="107" text-anchor="middle" dominant-baseline="central">ChatGPT, Claude, etc.</text>
-<text class="ts" x="340" y="125" text-anchor="middle" dominant-baseline="central">Reasoning and interaction</text>
-<text class="ts" x="340" y="143" text-anchor="middle" dominant-baseline="central">No authoritative system state</text>
+      .chatgpt {
+        fill:#eef7f3;
+        stroke:#a7d3c2;
+        stroke-width:1.3;
+      }
 
-<!-- Arrow 1 -->
-<line x1="340" y1="160" x2="340" y2="200" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+      .claude {
+        fill:#f5f0fb;
+        stroke:#c9b5e8;
+        stroke-width:1.3;
+      }
 
-<!-- Box 2: Invocation Interface -->
-<rect x="100" y="200" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
-<text class="th" x="340" y="225" text-anchor="middle" dominant-baseline="central">Invocation Interface</text>
-<text class="ts" x="340" y="247" text-anchor="middle" dominant-baseline="central">MCP / API / Webhooks</text>
-<text class="ts" x="340" y="265" text-anchor="middle" dominant-baseline="central">Request boundary</text>
+      .mcp {
+        fill:#fff;
+        stroke:#789bdb;
+        stroke-width:1.8;
+      }
 
-<!-- Arrow 2 -->
-<line x1="340" y1="280" x2="340" y2="320" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+      .archive-flow {
+        fill:#eef6ff;
+        stroke:#69a0e9;
+        stroke-width:1.8;
+      }
 
-<!-- Box 3: Orchestration Layer -->
-<rect x="100" y="320" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
-<text class="th" x="340" y="345" text-anchor="middle" dominant-baseline="central">Orchestration Layer</text>
-<text class="ts" x="340" y="367" text-anchor="middle" dominant-baseline="central">Workflow execution</text>
-<text class="ts" x="340" y="385" text-anchor="middle" dominant-baseline="central">Routing / retries / failure handling</text>
+      .retrieve-flow {
+        fill:#eef6ff;
+        stroke:#69a0e9;
+        stroke-width:1.8;
+      }
 
-<!-- Arrow 3 -->
-<line x1="340" y1="400" x2="340" y2="440" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+      .formatter {
+        fill:#f7f2fc;
+        stroke:#9a78ce;
+        stroke-width:1.8;
+      }
 
-<!-- Box 4: Context Layer -->
-<rect x="100" y="440" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
-<text class="th" x="340" y="465" text-anchor="middle" dominant-baseline="central">Context Layer</text>
-<text class="ts" x="340" y="487" text-anchor="middle" dominant-baseline="central">Deterministic transformation</text>
-<text class="ts" x="340" y="505" text-anchor="middle" dominant-baseline="central">Context retrieval</text>
+      .notion-shell {
+        fill:#fff;
+        stroke:#cba56e;
+        stroke-width:1.8;
+      }
 
-<!-- Arrow 4 -->
-<line x1="340" y1="520" x2="340" y2="560" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+      .archive-store {
+        fill:#fff8ec;
+        stroke:#e3ae61;
+        stroke-width:1.5;
+      }
 
-<!-- Box 5: Data Layer -->
-<rect x="100" y="560" width="480" height="80" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
-<text class="th" x="340" y="585" text-anchor="middle" dominant-baseline="central">Data Layer</text>
-<text class="ts" x="340" y="607" text-anchor="middle" dominant-baseline="central">Archive system of record</text>
-<text class="ts" x="340" y="625" text-anchor="middle" dominant-baseline="central">Persistent structured storage</text>
+      .related {
+        fill:#fcf9f4;
+        stroke:#ddc6a5;
+        stroke-width:1.2;
+      }
 
-<!-- Arrow 5 -->
-<line x1="340" y1="640" x2="340" y2="680" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow)"/>
+      .request {
+        fill:none;
+        stroke:#34435a;
+        stroke-width:2.2;
+        marker-end:url(#arrow-dark);
+      }
 
-<!-- Box 6: Output -->
-<rect x="100" y="680" width="480" height="64" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
-<text class="th" x="340" y="700" text-anchor="middle" dominant-baseline="central">Structured Context</text>
-<text class="ts" x="340" y="722" text-anchor="middle" dominant-baseline="central">Retrieved in a structured response and reusable across sessions</text>
+      .data {
+        fill:none;
+        stroke:#a5541a;
+        stroke-width:2;
+        marker-end:url(#arrow-brown);
+      }
 
-<!-- Side note -->
-<rect x="40" y="762" width="600" height="24" rx="4" fill="#f5f5f5" stroke="#d3d3d3" stroke-width="0.5"/>
-<text class="ts" x="340" y="778" text-anchor="middle" dominant-baseline="central">Archived interactions are persistently stored and retrievable on request.</text>
+      .data-read {
+        fill:none;
+        stroke:#a5541a;
+        stroke-width:2;
+        marker-start:url(#arrow-brown-start);
+        marker-end:url(#arrow-brown);
+      }
 
+      .internal {
+        fill:none;
+        stroke:#815ab8;
+        stroke-width:2;
+        marker-start:url(#arrow-purple-start);
+        marker-end:url(#arrow-purple);
+      }
+
+      .response {
+        fill:none;
+        stroke:#2768e8;
+        stroke-width:2.1;
+        stroke-dasharray:7 6;
+        marker-end:url(#arrow-blue);
+      }
+
+      .response-rail {
+        fill:none;
+        stroke:#2768e8;
+        stroke-width:2.1;
+        stroke-dasharray:7 6;
+      }
+
+      .divider {
+        stroke:#e2e7ef;
+        stroke-width:1;
+      }
+    </style>
+
+    <marker
+      id="arrow-dark"
+      markerWidth="9"
+      markerHeight="9"
+      refX="8"
+      refY="4.5"
+      orient="auto"
+    >
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#34435a"/>
+    </marker>
+
+    <marker
+      id="arrow-brown"
+      markerWidth="9"
+      markerHeight="9"
+      refX="8"
+      refY="4.5"
+      orient="auto"
+    >
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#a5541a"/>
+    </marker>
+
+    <marker
+      id="arrow-brown-start"
+      markerWidth="9"
+      markerHeight="9"
+      refX="1"
+      refY="4.5"
+      orient="auto"
+    >
+      <path d="M9 0 L0 4.5 L9 9 Z" fill="#a5541a"/>
+    </marker>
+
+    <marker
+      id="arrow-purple"
+      markerWidth="9"
+      markerHeight="9"
+      refX="8"
+      refY="4.5"
+      orient="auto"
+    >
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#815ab8"/>
+    </marker>
+
+    <marker
+      id="arrow-purple-start"
+      markerWidth="9"
+      markerHeight="9"
+      refX="1"
+      refY="4.5"
+      orient="auto"
+    >
+      <path d="M9 0 L0 4.5 L9 9 Z" fill="#815ab8"/>
+    </marker>
+
+    <marker
+      id="arrow-blue"
+      markerWidth="9"
+      markerHeight="9"
+      refX="8"
+      refY="4.5"
+      orient="auto"
+    >
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#2768e8"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1400" height="820"/>
+
+  <text class="heading" x="38" y="43">Weft runtime overview</text>
+  <text class="subtitle" x="38" y="69">
+    Archive, search and retrieve conversations through Make MCP and Notion
+  </text>
+
+  <text class="column" x="38" y="112">AI CLIENTS</text>
+  <text class="column" x="280" y="112">CONNECTION</text>
+  <text class="column" x="520" y="112">WEFT OPERATIONS</text>
+  <text class="column" x="1010" y="112">NOTION</text>
+
+  <!-- AI clients -->
+  <rect class="client-shell" x="30" y="135" width="205" height="245" rx="18"/>
+
+  <rect class="chatgpt" x="52" y="162" width="161" height="72" rx="13"/>
+  <text class="box-title" x="132.5" y="193" text-anchor="middle">ChatGPT</text>
+  <text class="body" x="132.5" y="216" text-anchor="middle">MCP client</text>
+
+  <rect class="claude" x="52" y="253" width="161" height="72" rx="13"/>
+  <text class="box-title" x="132.5" y="284" text-anchor="middle">Claude</text>
+  <text class="body" x="132.5" y="307" text-anchor="middle">MCP client</text>
+
+  <text class="small" x="132.5" y="352" text-anchor="middle">
+    Archive, search or retrieve
+  </text>
+
+  <!-- Make MCP -->
+  <rect class="mcp" x="280" y="198" width="178" height="118" rx="17"/>
+  <text class="box-title" x="369" y="239" text-anchor="middle">Make MCP</text>
+  <text class="body" x="369" y="266" text-anchor="middle">
+    Connects the clients
+  </text>
+  <text class="body" x="369" y="287" text-anchor="middle">
+    to active scenarios
+  </text>
+
+  <!-- Weft operations -->
+  <rect class="archive-flow" x="520" y="137" width="330" height="112" rx="17"/>
+  <text class="mono" x="685" y="177" text-anchor="middle">
+    archive_conversation
+  </text>
+  <text class="body" x="685" y="204" text-anchor="middle">
+    Creates or updates one Archive record
+  </text>
+  <text class="small" x="685" y="226" text-anchor="middle">
+    Maintains its related Notion records
+  </text>
+
+  <rect class="retrieve-flow" x="520" y="330" width="330" height="100" rx="17"/>
+  <text class="mono" x="685" y="370" text-anchor="middle">
+    search_archive
+  </text>
+  <text class="body" x="685" y="399" text-anchor="middle">
+    Finds matching Archive records
+  </text>
+
+  <rect class="retrieve-flow" x="520" y="518" width="330" height="100" rx="17"/>
+  <text class="mono" x="685" y="558" text-anchor="middle">
+    get_context
+  </text>
+  <text class="body" x="685" y="587" text-anchor="middle">
+    Returns content from matching Archive records
+  </text>
+
+  <rect class="formatter" x="650" y="678" width="250" height="86" rx="16"/>
+  <text class="mono" x="775" y="711" text-anchor="middle">
+    notion_text_formatter
+  </text>
+  <text class="small" x="775" y="738" text-anchor="middle">
+    Normalizes stored page content
+  </text>
+
+  <!-- Notion -->
+  <rect class="notion-shell" x="1010" y="135" width="350" height="565" rx="19"/>
+  <text class="box-title" x="1185" y="170" text-anchor="middle">
+    Weft in Notion
+  </text>
+
+  <rect class="archive-store" x="1035" y="190" width="185" height="455" rx="16"/>
+  <text class="box-title" x="1127.5" y="225" text-anchor="middle">
+    Archive
+  </text>
+  <text class="small" x="1127.5" y="251" text-anchor="middle">
+    Conversation metadata
+  </text>
+  <text class="small" x="1127.5" y="270" text-anchor="middle">
+    and stored page content
+  </text>
+
+  <line class="divider" x1="1055" y1="294" x2="1200" y2="294"/>
+
+  <text class="small" x="1127.5" y="332" text-anchor="middle">
+    Archive write
+  </text>
+  <text class="small" x="1127.5" y="388" text-anchor="middle">
+    Search records
+  </text>
+  <text class="small" x="1127.5" y="574" text-anchor="middle">
+    Read matching records
+  </text>
+
+  <text
+    class="small"
+    x="1287.5"
+    y="213"
+    text-anchor="middle"
+    style="font-weight:700;letter-spacing:.8px"
+  >
+    RELATED RECORDS
+  </text>
+
+  <rect class="related" x="1240" y="235" width="95" height="84" rx="12"/>
+  <text
+    class="box-title"
+    x="1287.5"
+    y="265"
+    text-anchor="middle"
+    style="font-size:14px"
+  >
+    Projects
+  </text>
+  <text class="small" x="1287.5" y="288" text-anchor="middle">Stable</text>
+  <text class="small" x="1287.5" y="305" text-anchor="middle">relation</text>
+
+  <rect class="related" x="1240" y="339" width="95" height="84" rx="12"/>
+  <text
+    class="box-title"
+    x="1287.5"
+    y="369"
+    text-anchor="middle"
+    style="font-size:14px"
+  >
+    Daily Log
+  </text>
+  <text class="small" x="1287.5" y="393" text-anchor="middle">Archive</text>
+  <text class="small" x="1287.5" y="410" text-anchor="middle">activity</text>
+
+  <rect class="related" x="1240" y="443" width="95" height="84" rx="12"/>
+  <text
+    class="box-title"
+    x="1287.5"
+    y="473"
+    text-anchor="middle"
+    style="font-size:14px"
+  >
+    Error Logs
+  </text>
+  <text class="small" x="1287.5" y="497" text-anchor="middle">Workflow</text>
+  <text class="small" x="1287.5" y="514" text-anchor="middle">errors</text>
+
+  <!-- Client request and shared response -->
+  <path class="request" d="M235 240 H280"/>
+  <text class="route-label" x="257" y="230" text-anchor="middle">
+    request
+  </text>
+
+  <path class="response" d="M280 290 H235"/>
+  <text class="route-label" x="257" y="312" text-anchor="middle">
+    response
+  </text>
+
+  <!-- Make MCP request routes -->
+  <path class="request" d="M458 230 H485 V193 H520"/>
+  <path class="request" d="M458 250 H480 V380 H520"/>
+  <path class="request" d="M458 270 H475 V568 H520"/>
+
+  <!-- Shared response rail to Make MCP -->
+  <path
+    class="response-rail"
+    d="M520 218 H500 M520 405 H500 M520 593 H500 M500 218 V593"
+  />
+  <path class="response" d="M500 300 H458"/>
+
+  <!-- Notion access -->
+  <path class="data" d="M850 193 H1035"/>
+  <text class="route-label" x="943" y="182" text-anchor="middle">
+    write
+  </text>
+
+  <path class="data-read" d="M850 380 H1035"/>
+  <text class="route-label" x="943" y="369" text-anchor="middle">
+    find matches
+  </text>
+
+  <path class="data-read" d="M850 568 H1035"/>
+  <text class="route-label" x="943" y="557" text-anchor="middle">
+    read records
+  </text>
+
+  <!-- Relations inside Notion -->
+  <path class="data" d="M1220 315 H1228 V277 H1240"/>
+  <path class="data" d="M1228 315 V381 H1240"/>
+  <path class="data" d="M1228 381 V485 H1240"/>
+
+  <!-- Internal formatter call -->
+  <path class="internal" d="M775 618 V678"/>
+  <text class="route-label" x="790" y="651">
+    format content
+  </text>
+
+  <!-- Legend -->
+  <rect
+    x="1010"
+    y="722"
+    width="350"
+    height="72"
+    rx="14"
+    fill="#fff"
+    stroke="#d7dee8"
+  />
+
+  <line
+    x1="1035"
+    y1="745"
+    x2="1075"
+    y2="745"
+    stroke="#34435a"
+    stroke-width="2.2"
+  />
+  <text class="small" x="1087" y="749">Client request</text>
+
+  <line
+    x1="1180"
+    y1="745"
+    x2="1220"
+    y2="745"
+    stroke="#a5541a"
+    stroke-width="2"
+  />
+  <text class="small" x="1232" y="749">Notion data</text>
+
+  <line
+    x1="1035"
+    y1="771"
+    x2="1075"
+    y2="771"
+    stroke="#2768e8"
+    stroke-width="2.1"
+    stroke-dasharray="7 6"
+  />
+  <text class="small" x="1087" y="775">Response</text>
+
+  <line
+    x1="1180"
+    y1="771"
+    x2="1220"
+    y2="771"
+    stroke="#815ab8"
+    stroke-width="2"
+  />
+  <text class="small" x="1232" y="775">Internal call</text>
 </svg>

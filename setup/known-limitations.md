@@ -1,59 +1,29 @@
-# Current Boundaries
+# Known limitations
 
-## Weft behavior boundaries
+This document separates limitations in Weft itself from constraints imposed by the platforms it uses.
 
-- timezone behavior across workflows
-- get_context exact-date route behavior
-- get_context limit help vs enforced behavior
-- record-level vs append-operation idempotency
+## Weft limitations
 
-## Make platform and export boundaries
+* `get_context` supports exact-date retrieval only when both `date_from` and `date_to` contain the same date. It does not support a date range; `search_archive` provides that search route instead.
 
-- canonical exports retain source-environment IDs, which installer rebinds
-- stale exported public interface metadata can occur
-- UI-visible AI-provider connection remains manual
+* Repeating an accepted archive request with the same `conversation_id` reuses the existing Notion Archive record instead of creating another one. Existing page content is not overwritten: content from the new request is appended below it. Weft does not currently detect whether those appended blocks duplicate content that is already present.
 
-### Make MCP archive rejection for Markdown-formatted `python -m` commands
+* Weft does not support semantic search.
 
-A reproducible interoperability issue has been observed when
-`archive_conversation` is invoked through Make MCP at `https://mcp.make.com`.
+## Installer and recovery boundaries
 
-Archive requests containing a `python -m ...` command formatted as Markdown
-code can be rejected with HTTP `403 Forbidden` before the
-`archive_conversation` scenario starts. In that case, no execution appears in
-Make Scenario History.
+* The installer does not automatically delete resources or perform a destructive rollback after a partial installation. Its state and reports should be kept so it can identify resources it created.
 
-The verified workaround is to preserve the command text unchanged, remove only
-the Markdown code formatting around the affected `python -m ...` command, and
-retry the archive request.
+* If local installer state is lost after scenarios have already been created, a later preflight stops when it finds matching scenario names that it cannot identify as its own. The matching state file must be restored, or the collision must be reviewed manually.
 
-The behavior has been reproduced in controlled tests and in multiple real
-archive requests. Previously rejected full archives completed successfully
-after applying the workaround, and exact retrieval by `conversation_id` also
-passed.
+## Platform constraints
 
-See
-[`../systems/archive-conversation/troubleshooting/make-mcp-403-markdown-python-module-command.md`](../systems/archive-conversation/troubleshooting/make-mcp-403-markdown-python-module-command.md)
-for diagnosis steps, reproduction evidence, and an AI-assisted troubleshooting
-prompt.
+Some setup steps still have to be completed in the Make or Notion interfaces because they depend on account-level resources or authorization that the installer cannot create or complete itself.
 
-The underlying Make MCP gateway rule has not been established.
+The optional `create_daily_log` workflow, for example, requires a Make `ai-provider` connection to exist before the installer can discover and bind it.
 
-## Installation and recovery boundaries
-
-- installation is not zero-touch because platform authorization remains manual
-- state loss after partial provisioning fails closed on scenario-name collisions
-- no automatic destructive rollback
-
-## Optional workflow boundary
-
-- create_daily_log parser Data Structure residual
+Make MCP can also reject an `archive_conversation` request before the scenario starts when the content contains a Markdown-formatted `python -m ...` command. The reproduced behavior and workaround are documented in the [Make MCP 403 troubleshooting note](../systems/archive-conversation/troubleshooting/make-mcp-403-markdown-python-module-command.md).
 
 ## Verification boundary
 
-- current repository changes require fresh live acceptance of the final published revision
-
-## Deferred hardening
-
-- append/block idempotency
-- blueprint metadata sanitizer
+The installation uses a configurable `weft_timezone` value for archive datetime normalization and date-based searches. The supplied blueprints use `Europe/Amsterdam`, and that configuration has been runtime-tested. Other IANA timezone values can be configured, but equivalent runtime testing has not been performed for each timezone.

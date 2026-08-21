@@ -312,7 +312,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(sanitized["count"], 3)
 
     def test_public_docs_use_real_entrypoint_and_no_private_runtime_dependency(self) -> None:
-        setup = (ROOT / "setup" / "make-provisioning.md").read_text(encoding="utf-8")
+        setup = (ROOT / "SETUP.md").read_text(encoding="utf-8")
         self.assertIn("python -m installer preflight", setup)
         self.assertIn("python -m installer install", setup)
         self.assertNotIn("Create an empty scenario", setup)

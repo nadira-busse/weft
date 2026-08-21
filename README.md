@@ -2,32 +2,29 @@
 
 [![Validate](https://github.com/nadira-busse/weft/actions/workflows/validate.yml/badge.svg)](https://github.com/nadira-busse/weft/actions/workflows/validate.yml)
 
-Weft started with a recurring problem in my own AI work: important project context was spread across conversations, and continuing work elsewhere often meant rebuilding part of that context first. I began storing selected conversations, decisions and workflow output as structured records that I could search and retrieve later.
+I built Weft because my project ideas and decisions were spread across different AI conversations. When I returned to a project later, a new chat could not retrieve what had happened elsewhere. I had to reconstruct the background before I could continue.
 
-The AI landscape has changed since then. Project memory, past-chat retrieval and persistent context are now much more capable in mainstream AI products. Weft remains valuable because it makes the context layer explicit: conversations, decisions and workflow output are stored in a system that can be inspected, queried, tested and reproduced independently of any single AI client.
+I wanted to choose which conversations were worth keeping, store them as complete records and retrieve the original content when I needed it again.
 
-As a portfolio project, Weft shows how I design AI workflow infrastructure with clear orchestration, structured storage, retrieval, explicit contracts and traceable behavior.
+Weft archives, searches and retrieves that context through Make, Notion and MCP. It worked in my own environment, but making it installable in another account exposed dependencies that the original workflows did not have to handle.
 
-Technically, Weft is an archive-first reference implementation built with Make, Notion and MCP-enabled AI clients. Make handles orchestration, Notion is the human-readable source of record, and three public workflows provide archive, search and context-retrieval operations.
+## What it does
 
-The repository includes the canonical Make blueprints, public contracts and schemas, sanitized fixtures, regression evidence, and a Python installer for repeatable provisioning.
+Weft provides three operations:
 
-## Public workflows
+| Operation | Result |
+|---|---|
+| `archive_conversation` | Creates or updates a stored conversation. |
+| `search_archive` | Returns matching archive records. |
+| `get_context` | Returns stored conversation content from matching Archive records. |
 
-| Scenario | Responsibility | Status |
-|---|---|---|
-| `archive_conversation` | Validate and create or update a durable archive record | Core MCP contract |
-| `search_archive` | Return bounded archive candidates through five established routes | Core MCP contract |
-| `get_context` | Return full persisted content through four established routes | Core MCP contract |
+Make runs the workflows. Notion stores the records in a form that remains readable and inspectable. MCP-enabled clients call the operations.
 
-Two additional workflows support the implementation:
+The diagram shows how the main parts connect. ChatGPT or Claude sends an archive, search or retrieval request through Make MCP. Make runs the corresponding workflow, while Notion stores the Archive and its related records. `notion_text_formatter` is used internally when `get_context` retrieves stored page content.
 
-- `weft_notion_text_formatter` is an internal deterministic child workflow used by `get_context`.
-- `weft_create_daily_log` is an optional scheduled summary workflow and is not part of the public MCP contract.
+![Weft runtime overview](./architecture/weft-system-overview.svg)
 
-## Inspect the workflows in Make
-
-The Weft scenarios are also available as public Make scenario pages. These pages let you inspect the actual workflows in Make and use Make's native **Use this scenario** flow when you want to reuse an individual scenario.
+The workflows can also be inspected directly in Make. These shared scenarios show the modules, routes and mappings, but they are not connected to a visitor’s own Make and Notion resources. Make therefore marks the unresolved account-specific connections and references. Use the installer when you want to create configured copies in your own environment.
 
 - [`archive_conversation`](https://eu1.make.com/public/shared-scenario/UrKrdWWmdo8/weft-archive-conversation)
 - [`search_archive`](https://eu1.make.com/public/shared-scenario/kMLUtxQJb2L/weft-search-archive)
@@ -35,104 +32,54 @@ The Weft scenarios are also available as public Make scenario pages. These pages
 - [`notion_text_formatter`](https://eu1.make.com/public/shared-scenario/CxwoCdhvFcx/weft-notion-text-formatter)
 - [`create_daily_log`](https://eu1.make.com/public/shared-scenario/HXO6dZj0Leo/weft-create-daily-log)
 
-The public scenario pages are useful for direct inspection and selective reuse. A copied scenario still requires environment-specific connections, Notion resources, Data Structures and, where applicable, scenario dependencies to be configured in the target Make environment.
+## What became difficult
 
-For a complete Weft installation, use the reproducible installer path documented in [`SETUP.md`](./SETUP.md).
+### Rebuilding the workflows in another account
 
-## What is reproducible
+A Make export still contains resources that belong to the account where it was created: connections, Data Structures, Notion database properties and references to other scenarios. Importing a blueprint does not make those dependencies portable.
 
-Weft is published as a reference implementation rather than a zero-touch deployment package.
+I built a Python installer that discovers the target resources, replaces only approved bindings and checks the generated scenarios before creating them. It then reads the scenarios back through the Make API and leaves them inactive for review.
 
-The public installer automates the repeatable Make provisioning work, including target discovery, dependency rebinding, candidate validation, scenario creation and read-back verification. A small manual boundary remains for external platform actions such as Notion template duplication, connection authorization, MCP exposure and final live acceptance.
+The blueprints in `setup/Make/blueprints/` remain unchanged. The installer creates separate copies, applies the target account’s connections and resource references to those copies, checks them and then creates the scenarios in Make.
 
-The recorded evidence for the current public implementation includes:
+The installer does not blindly repeat a create request when the result is uncertain. It first checks what exists and either continues from verified state or stops when it cannot establish ownership safely.
 
-- A full clean installation and acceptance using new Notion, Make, ChatGPT and Claude accounts passed on 6 August 2026.
-- All three public MCP workflows passed manual acceptance in both ChatGPT and Claude.
-- The `archive_conversation` V4 Route 1–7 regression run passed on 6 August 2026. The expected MCP/Make response was produced for every route class, and all manual assertions defined by the test procedure were verified and confirmed.
-- The repository validation suite includes installer unit tests, schema and fixture validation, internal-link validation and a publication audit. The same validation sequence runs in GitHub Actions on push and pull request.
+The installation path is documented in [SETUP.md](./SETUP.md). The implementation is in [`installer/`](./installer/).
 
-The [V4 regression report](./regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md) records the exact persistence, relation, normalization, precondition and no-change assertions covered by that test run.
+### Protecting an existing archive record
 
-The detailed verification boundaries and acceptance evidence are documented in [`setup/verification.md`](./setup/verification.md).
+Each stored conversation has a stable `conversation_id` and belongs to one normalized project key.
 
-Runtime acceptance belongs to the revision that was actually tested. Local validators and mocked installer tests do not themselves rerun Make, Notion, ChatGPT or Claude, so a later canonical blueprint revision still requires fresh live acceptance before the same runtime claim can be made for that revision.
+If a later request tries to attach that conversation to a different project, Weft returns `PROJECT_CONFLICT` without changing the Archive record or creating related records. If the Project record has disappeared but the stored key still matches, Weft recreates the missing Project and repairs the existing relation instead of creating another Archive.
 
-## Established retrieval behavior
+These paths are defined in the [payload contract](./contracts/payload-contract.md) and tested in the [V4 regression report](./regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md).
 
-The accepted `get_context` routes are:
+### Finding errors behind a successful Make run
 
-- query;
-- conversation ID;
-- exact date;
-- project.
+Some of the hardest failures did not make the scenario fail. Make completed successfully while the response was still wrong.
 
-Exact-date retrieval requires equal `date_from` and `date_to` values.
+One search found several records but returned only one because separate Make bundles had not been aggregated into the final response array. Other defects turned existing Notion values into null through incorrect typed mappings, or included page labels such as Conversation ID and Message count in full_content instead of returning only the archived conversation.
 
-The accepted `search_archive` routes are:
+I traced those failures across the contract, Make run output and stored Notion values, then added checks for the response shape and the assumptions introduced by each fix. The write and retrieval paths, including their remaining evidence boundaries, are documented under [`systems/`](./systems/).
 
-- conversation ID;
-- exact date;
-- date range;
-- project;
-- query.
+## Inspect or reproduce Weft
 
-These routes are part of the current public behavior and should not be redesigned as part of installation or rebinding.
+- Start with [SETUP.md](./SETUP.md) to reproduce the complete system.
+- Use the [payload contract](./contracts/payload-contract.md) for the three operations.
+- Inspect the [Archive Conversation](./systems/archive-conversation/README.md) and [Context Retrieval](./systems/context-retrieval/README.md) documents for implementation details and failure history.
 
-## Source of truth
+On 19 August 2026, I installed Weft from a newly downloaded copy of the repository on Windows using new Notion, Make, ChatGPT and Claude accounts, and tested archiving, searching and retrieval through both AI clients.
 
-Canonical Make exports live in [`setup/Make/blueprints/`](./setup/Make/blueprints/).
+## Current boundaries
 
-Their modules, routes, filters and mappings are the implementation source of truth. Source-environment connection, scenario, Data Structure and Notion resource IDs remain in the exports to preserve the canonical scenario structure. The installer resolves the target environment and replaces those bindings in generated candidates without modifying the canonical exports.
+Weft is a reference implementation, not a hosted service or a general-purpose AI memory platform.
 
-The public client contract is defined through:
+- Notion template duplication, connection authorization, MCP exposure and final client acceptance remain manual steps.
+- Weft does not support semantic search.
+- Repeating an accepted archive request with the same conversation_id reuses the existing Notion record instead of creating another one. The existing page content is not overwritten: the content from the new request is appended below it. Weft does not currently detect whether those appended blocks duplicate content that is already present.
+- The reproduced Make MCP 403 workaround is documented, but the underlying gateway rule is unknown.
 
-- [`contracts/payload-contract.md`](./contracts/payload-contract.md)
-- [`schemas/`](./schemas/)
-- [`examples/public-contracts/`](./examples/public-contracts/)
-
-## Reproduce Weft
-
-For a first-time installation, clone or download a clean copy of this repository and follow [`SETUP.md`](./SETUP.md).
-
-That document is the canonical end-to-end installation guide. The files under [`setup/`](./setup/) provide supporting technical reference material rather than a second installation procedure.
-
-The primary Make provisioning path is the public installer documented in [`installer/README.md`](./installer/README.md). Manual blueprint import followed by per-module rebinding is not the supported end-user installation path.
-
-The tested local Python runtime is Python 3.13.3. Broader Python-version compatibility has not been established.
-
-Run the repository checks from the repository root:
-
-```powershell
-python -m pip install -r requirements.txt
-python -m unittest discover -s installer/tests -p "test_*.py" -v
-python scripts/validate_examples.py
-python scripts/check_internal_links.py
-python scripts/audit_publication.py
-```
-
-Current platform, installer and export boundaries are documented in [`setup/known-limitations.md`](./setup/known-limitations.md).
-
-## Repository map
-
-| Directory                                  | Responsibility                                                                              |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| [`architecture/`](./architecture/)         | System boundaries, layer model and engineering principles                                   |
-| [`systems/`](./systems/)                   | Write- and read-side implementation documentation and system-local evidence                 |
-| [`contracts/`](./contracts/)               | Public payload behavior                                                                     |
-| [`schemas/`](./schemas/)                   | Request and response JSON Schemas                                                           |
-| [`examples/`](./examples/)                 | Sanitized valid and invalid public-contract fixtures                                        |
-| [`regression-tests/`](./regression-tests/) | Sanitized V4 route fixtures and the canonical `archive_conversation` regression report      |
-| [`installer/`](./installer/)               | Public Make configuration, preflight, provisioning, recovery and read-back verification CLI |
-| [`setup/`](./setup/)                       | Supporting Notion, Make, connection, Data Structure and verification references             |
-| [`scripts/`](./scripts/)                   | Deterministic repository validation and publication checks                                  |
-
-Representative runtime-history screenshots are stored with the systems they document:
-
-* [`systems/archive-conversation/`](./systems/archive-conversation/)
-* [`systems/context-retrieval/`](./systems/context-retrieval/)
-
-They are historical runtime evidence, not proof of a later clean-account installation.
+The complete list is maintained in [`setup/known-limitations.md`](./setup/known-limitations.md).
 
 ## License
 

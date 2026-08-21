@@ -51,7 +51,7 @@ class Target:
 
 
 def example(path: str) -> Path:
-    return ROOT / "examples/public-contracts" / path
+    return ROOT / "examples/contracts" / path
 
 
 def regression(path: str) -> Path:
@@ -198,7 +198,7 @@ def validate_schemas() -> tuple[dict[str, object], list[str]]:
 
 
 def check_fixture_registration() -> list[str]:
-    root = ROOT / "examples/public-contracts"
+    root = ROOT / "examples/contracts"
     discovered = {path for path in root.rglob("*.json")}
     registered = {target.example for target in TARGETS}
     failures = []

@@ -2,43 +2,36 @@
 
 ## Reporting a vulnerability
 
-If you find a potential security issue in Weft, please do not open a public GitHub issue.
+If you find a potential security issue in Weft, do not open a public GitHub issue.
 
 Use GitHub Private Vulnerability Reporting for this repository instead.
 
-When reporting a vulnerability, include where possible:
+When reporting an issue, include where possible:
 
-- a short description of the issue;
-- the affected file, component, workflow or setup step;
-- reproduction details;
-- the potential impact;
-- any relevant environment or configuration context.
+* a short description of the problem
+* the affected file, workflow, component or setup step
+* steps to reproduce it
+* the potential impact
+* any relevant environment or configuration details
 
-## Project scope
+Do not include secrets, API keys, tokens, passwords or other credentials in the report.
 
-Weft is a public Apache-2.0-licensed reference implementation and portfolio project.
+## Scope
 
-It is not operated as a hosted production service for third-party users.
+Weft is distributed under the Apache-2.0 license and is not operated as a hosted service.
 
-The repository demonstrates archive, retrieval, installer and workflow patterns across Make, Notion and MCP-oriented integrations. Security of a self-hosted or reproduced deployment also depends on the operator's own:
+A Weft installation uses resources and credentials in the user's own Make, Notion and MCP client environment. Security therefore also depends on how those accounts and integrations are configured, including:
 
-- Make account and API-token configuration;
-- Notion workspace and integration permissions;
-- MCP client configuration;
-- credential storage;
-- access controls;
-- external platform settings.
+* Make account, connection and API credentials
+* Notion workspace and integration permissions
+* MCP client authorization and local credential handling
 
-Do not include secrets, API keys, tokens, passwords or other credentials in a vulnerability report.
+Issues in Weft's repository, installer, workflows, schemas or documented setup are within the scope of this security policy.
+
+Issues caused only by a user's own account permissions, credentials or third-party platform configuration are outside the repository's direct control.
 
 ## Supported version
 
-Security fixes, where applicable, target the current repository state on the default branch.
+Security fixes target the current repository state on the default branch.
 
 Older revisions and independently modified deployments are not separately maintained.
-
-## Response expectations
-
-No response-time, remediation-time or support SLA is provided.
-
-Reports will be reviewed when possible, and confirmed repository issues may be addressed according to their severity, reproducibility and the current maintenance scope of the project.

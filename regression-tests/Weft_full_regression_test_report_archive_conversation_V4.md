@@ -4,7 +4,7 @@
 **MCP tool:** `archive_conversation (MCP tool)`
 **Test suite:** V4
 **Execution date:** 6 August 2026
-**Repository purpose:** Public reference implementation
+**Repository purpose:** Weft regression evidence
 **Result:** **PASSED at tool-response and defined manual side-effect verification levels for all seven regression routes**
 
 > This report records the V4 regression run after the latest changes to `archive_conversation`. It separates observable MCP/Make responses from manual Notion checks so that the evidence remains reproducible and auditable. For publication, account-bound record IDs, Notion URLs, scenario/tool names, and numeric Make module labels have been replaced with deterministic synthetic or descriptive values; response fields and cross-test identity relationships are preserved.
@@ -13,7 +13,7 @@
 
 ## 1. Scope
 
-The regression suite validates the core routing and data-integrity behaviour of `archive_conversation`:
+The regression suite validates the core routing and data-integrity behavior of `archive_conversation`:
 
 1. invalid required input is rejected;
 2. a new project and archive record can be created;
@@ -535,7 +535,7 @@ All manual assertions defined for this regression test were verified and confirm
 
 ## Purpose
 
-Verify fail-closed behaviour when the Archive relation is empty, the stored key is `route v4 delta`, and the incoming request asks for `Route V4 Epsilon`.
+Verify fail-closed behavior when the Archive relation is empty, the stored key is `route v4 delta`, and the incoming request asks for `Route V4 Epsilon`.
 
 ## 9.1 Delta fixture request
 
@@ -665,7 +665,7 @@ All manual assertions defined for this regression test were verified and confirm
 
 # 10. Regression matrix
 
-| Test | Behaviour | Expected result | Observed result | Status |
+| Test | Behavior | Expected result | Observed result | Status |
 |---|---|---|---|---|
 | 1 | Invalid `conversation_id` | Reject before write | `validation_error` | **PASSED — both evidence levels** |
 | 2 | New project + new archive | Create both | `success` | **PASSED — both evidence levels** |
@@ -677,7 +677,7 @@ All manual assertions defined for this regression test were verified and confirm
 
 ---
 
-# 11. Behaviour confirmed by V4
+# 11. Behavior confirmed by V4
 
 V4 demonstrates the intended routing model:
 
@@ -703,7 +703,7 @@ stored project key != requested project key
 
 Environment-specific Make module labels and numeric IDs in the captured responses have been replaced with stable descriptive identifiers such as `archive_conversation.append_page` and `archive_conversation.guard.project_key`. The original module IDs are not part of the public API contract and can change when the scenario is edited or imported.
 
-The stable behavioural contract is defined by:
+The stable behavioral contract is defined by:
 
 - response status;
 - `error_type`;
@@ -734,13 +734,13 @@ All manual assertions listed for each test were completed and confirmed alongsid
 
 # 14. Conclusion
 
-`archive_conversation` V4 demonstrates the core guarantees required for the public Weft reference implementation:
+`archive_conversation` V4 demonstrates the tested Weft behavior covered by this regression suite:
 
 - deterministic conversation identity;
 - controlled Project creation and reuse;
 - preservation of Archive record identity on update;
 - explicit Project conflict protection;
 - safe recovery from a missing Project relation;
-- fail-closed behaviour when stored and requested project identity disagree.
+- fail-closed behavior when stored and requested project identity disagree.
 
 The regression suite deliberately exercises failure paths as well as success paths. For Weft, reproducibility means more than proving that the happy path works. It also means proving that state remains protected when related Notion data is missing, deleted, or inconsistent.

@@ -1,32 +1,214 @@
-# Public Payload Contracts
+# Payload contracts
 
-The exported Make `io.input_spec` and `io.output_spec` definitions are the implementation source for these three MCP contracts. JSON Schemas are canonical machine-readable projections under [`../schemas/`](../schemas/); sanitized valid and invalid fixtures are under [`../examples/public-contracts/`](../examples/public-contracts/).
+The three MCP operations use fixed request and response structures. Those structures are defined in the exported Make scenarios and mirrored in JSON Schemas so they can be checked without running the workflows.
+
+The schemas are grouped by operation:
+
+* [`archive_conversation`](../schemas/archive-conversation/)
+* [`search_archive`](../schemas/search-archive/)
+* [`get_context`](../schemas/get-context/)
+
+Sanitized example payloads are stored under [`examples/contracts/`](../examples/contracts/). Files ending in `.invalid.json` are intentionally invalid and are expected to fail when [`scripts/validate_examples.py`](../scripts/validate_examples.py) runs.
+
+Some behavior cannot be expressed by JSON Schema alone. The validator and regression tests therefore also check rules that depend on values or stored state, such as equal dates for exact-date `get_context` requests and project conflicts during archiving.
 
 ## `archive_conversation`
 
-Required request fields are `conversation_id`, `conversation_title`, `project`, `extraction_type`, `start_time`, `message_count` and a non-empty `messages` array. Each message contains `role` and `content` text. Optional enrichment fields are `end_time`, `summary`, `action_items`, `key_insights`, `categories`, `source`, `source_platform`, `payload_json`, `status`, `priority` and `sentiment`.
+### Request
 
-`start_time` and `end_time` accept an ISO datetime or local `HH:mm` value. The exported workflow uses `Europe/Amsterdam` when normalizing local values.
+The `archive_conversation` request requires:
 
-`conversation_id` is trimmed at the deterministic normalization boundary. A value containing only whitespace is invalid and returns `validation_error` before any Notion lookup or write. Successful and blocked responses return that same canonical, trimmed identity.
+* `conversation_id`
+* `conversation_title`
+* `project`
+* `extraction_type`
+* `start_time`
+* `message_count`
+* a non-empty `messages` array
 
-Archive writes use the normalized title, timestamps, message count, project key, source, platform, extraction type, sentiment, priority, action items, key insights, categories, status and storage payload. Summary remains the supplied summary because the workflow has no separate canonical summary variable. Categories and status retain their exported array handling.
+Each message contains a `role` and `content`.
 
-The response exposes `status`, `conversation_id`, `record_id`, `notion_url`, `error_type`, `message`, `module` and `timestamp`. Only `status` and `conversation_id` are required by the public output specification; route-specific fields are optional. Runtime routes use `success`, `partial`, `blocked` and `error` status values.
+The request can also include:
 
-A conversation ID is canonically bound to one project. When an existing Archive stores a different canonical project key, the request returns `status: blocked`, `error_type: PROJECT_CONFLICT`, the existing Archive `record_id` and `notion_url`, and the exact message `Conversation exists under a different project; request blocked without changes.` The conflict route does not create or recreate a Project, update Archive properties, append page content, create a duplicate Archive, or create an Error Log.
+* `end_time`
+* `summary`
+* `action_items`
+* `key_insights`
+* `categories`
+* `source`
+* `source_platform`
+* `payload_json`
+* `status`
+* `priority`
+* `sentiment`
 
-When a requested Project is absent, the workflow searches Archive before creating the Project. A matching existing Archive with no valid Project relation takes the repair route: it recreates the Project once, updates the existing Archive relation, appends the new content, and returns the original Archive identity. A conflicting existing Archive takes the no-write blocked route instead.
+### Datetimes
 
-Schemas: [`request`](../schemas/archive-conversation/request.schema.json), [`response`](../schemas/archive-conversation/response.schema.json).
+`start_time` and `end_time` accept either an ISO 8601 datetime or a local `HH:mm` value.
+
+Local values are interpreted using the installation's `weft_timezone` setting. The supplied `archive_conversation` blueprint sets this to `Europe/Amsterdam`.
+
+The workflow normalizes these values before validating or storing them. This was added because an earlier implementation accepted `HH:mm` at the input boundary but then validated the original value as though it already had to be an ISO datetime.
+
+A supplied `end_time` is preserved and normalized. When `end_time` is omitted, the workflow uses the current archive time.
+
+A local `HH:mm` value does not contain a calendar date. If a conversation is archived on a later day, the original date cannot be reconstructed from that value alone. In that case, the request should provide at least a dated `start_time`.
+
+The `Europe/Amsterdam` configuration has been runtime-tested. The repository does not contain equivalent runtime evidence for every other IANA timezone.
+
+### Conversation identity
+
+`conversation_id` is trimmed during normalization.
+
+A value containing only whitespace is invalid. The workflow returns a `validation_error` before performing a Notion lookup or write.
+
+The fixtures include this case explicitly:
+
+[`whitespace-conversation-id.invalid.json`](../examples/contracts/archive-conversation/whitespace-conversation-id.invalid.json)
+
+Successful and blocked responses return the same trimmed conversation ID used by the workflow internally.
+
+### Stored values
+
+Before writing to Notion, the workflow normalizes the values used for the Archive record, including:
+
+* title
+* timestamps
+* message count
+* project key
+* source and source platform
+* extraction type
+* sentiment
+* priority
+* action items
+* key insights
+* categories
+* status
+* storage payload
+
+`summary` remains the summary supplied by the caller. The workflow does not create a separate normalized summary value.
+
+Categories and status retain the array handling used by the exported workflow.
+
+### Response
+
+The response can contain:
+
+* `status`
+* `conversation_id`
+* `record_id`
+* `notion_url`
+* `error_type`
+* `message`
+* `module`
+* `timestamp`
+
+Only `status` and `conversation_id` are required for every response. Other fields depend on the route that was taken.
+
+The current workflow returns these status values:
+
+* `success`
+* `partial`
+* `blocked`
+* `error`
+
+### Existing conversations and project conflicts
+
+A `conversation_id` belongs to one normalized project identity.
+
+If the Archive already exists under a different project key, Weft returns:
+
+```text
+status: blocked
+error_type: PROJECT_CONFLICT
+```
+
+The response also contains the existing Archive `record_id` and `notion_url`, together with:
+
+```text
+Conversation exists under a different project; request blocked without changes.
+```
+
+That route does not:
+
+* create or recreate a Project;
+* update the Archive;
+* append page content;
+* create another Archive;
+* create an Error Log.
+
+The fixtures include a project-conflict response so this no-change route can be checked against the expected payload:
+
+[`project-conflict.response.json`](../examples/contracts/archive-conversation/project-conflict.response.json)
+
+A missing Project record is handled differently.
+
+If the Archive already contains the same project key but its Project relation is missing or invalid, the workflow recreates the Project once, reconnects the existing Archive, appends the new content, and returns the original Archive identity.
+
+It does not create another Archive merely because the related Project record disappeared.
+
+Request schema: [`request.schema.json`](../schemas/archive-conversation/request.schema.json)
+
+Response schema: [`response.schema.json`](../schemas/archive-conversation/response.schema.json)
+
+Examples: [`archive_conversation`](../examples/contracts/archive-conversation/)
 
 ## `search_archive`
 
-The request accepts `query`, `conversation_id`, `project`, `date_from`, `date_to` and `limit`. At least one route driver is required. Date searches supply both date fields. The exported default limit is 10 and validation rejects non-positive values.
+### Request
 
-The five established routes are evaluated for conversation ID, exact date, date range, normalized project and query. Query searches Title, Summary, Full content and Key insights. Date-range upper bounds are calculated in `Europe/Amsterdam`.
+The `search_archive` request supports these fields:
 
-The response uses the top-level field `results_count` exactly as exported. Each result contains:
+* `query`
+* `conversation_id`
+* `project`
+* `date_from`
+* `date_to`
+* `limit`
+
+At least one supported search criterion is required.
+
+Date searches require both `date_from` and `date_to`.
+
+The default limit in the exported workflow is `10`. Values of `0` or lower are rejected.
+
+### Search routes
+
+The workflow supports five search routes:
+
+* conversation ID;
+* exact date;
+* date range;
+* normalized project;
+* text query.
+
+The route is selected from the criteria supplied in the request.
+
+A conversation ID search uses `conversation_id`.
+
+A project search uses the normalized project key.
+
+A text query searches the stored Title, Summary, Full content, and Key insights fields.
+
+### Date searches
+
+When `date_from` and `date_to` are equal, the workflow performs an exact-date search.
+
+When `date_from` is earlier than `date_to`, the workflow searches the inclusive date range between them.
+
+A `date_from` later than `date_to` is invalid.
+
+The workflow uses `weft_timezone` when converting the requested date boundary into the timestamp used for the Notion search. The supplied blueprint sets this value to `Europe/Amsterdam`.
+
+### Response
+
+The top-level result count is named:
+
+```text
+results_count
+```
+
+Each result contains:
 
 ```json
 {
@@ -40,15 +222,52 @@ The response uses the top-level field `results_count` exactly as exported. Each 
 }
 ```
 
-Successful and empty lookups return `success: true`; validation envelopes return `success: false`. Both retain `results`, `results_count`, `meta` and `message`.
+A valid search returns `success: true`, including when no records match.
 
-Schemas: [`request`](../schemas/search-archive/request.schema.json), [`response`](../schemas/search-archive/response.schema.json).
+Validation failures return `success: false`.
+
+The response contains:
+
+* `results`
+* `results_count`
+* `meta`
+* `message`
+
+Request schema: [`request.schema.json`](../schemas/search-archive/request.schema.json)
+
+Response schema: [`response.schema.json`](../schemas/search-archive/response.schema.json)
+
+Examples: [`search_archive`](../examples/contracts/search-archive/)
 
 ## `get_context`
 
-The request accepts `query`, `conversation_id`, `project`, `date_from`, `date_to` and `limit`. It supports four established retrieval modes: query, conversation ID, exact date and normalized project.
+### Request
 
-Exact-date retrieval requires both `date_from` and `date_to`, and the values must be equal. JSON Schema can require the pair but cannot compare their values; the local validator therefore applies an additional semantic equality check. The exported executable flow defaults the limit to 5 and rejects non-positive values. Although its input help mentions a maximum of 20, the flow does not enforce that maximum, so the public schema does not claim one.
+The `get_context` request supports these fields:
+
+* `query`
+* `conversation_id`
+* `project`
+* `date_from`
+* `date_to`
+* `limit`
+
+The current workflow supports four retrieval modes:
+
+* text query;
+* conversation ID;
+* exact date;
+* normalized project.
+
+Unlike `search_archive`, `get_context` does not support a date range.
+
+For date retrieval, both `date_from` and `date_to` must be present and must contain the same date.
+
+JSON Schema can require both fields, but it cannot express that their values must be equal. [`scripts/validate_examples.py`](../scripts/validate_examples.py) therefore performs that additional check.
+
+The exported workflow defaults `limit` to `5` and rejects values of `0` or lower.
+
+### Response
 
 Each result contains:
 
@@ -63,10 +282,48 @@ Each result contains:
 }
 ```
 
-The response uses `result_count` (singular), a structured `results` array, `meta`, and a route-specific `message`. Successful routes set `meta.retrieval_mode` to `query`, `conversation_id`, `date` or `project`. Empty results remain successful; invalid input returns `success: false`.
+The top-level count is named:
 
-Schemas: [`request`](../schemas/get-context/request.schema.json), [`response`](../schemas/get-context/response.schema.json).
+```text
+result_count
+```
+
+This differs from the `results_count` field used by `search_archive` because that is how the exported workflows currently return their responses.
+
+Successful retrieval sets `meta.retrieval_mode` to one of:
+
+* `query`
+* `conversation_id`
+* `date`
+* `project`
+
+No matches still produce a successful response.
+
+Invalid input returns `success: false`.
+
+Request schema: [`request.schema.json`](../schemas/get-context/request.schema.json)
+
+Response schema: [`response.schema.json`](../schemas/get-context/response.schema.json)
+
+Examples: [`get_context`](../examples/contracts/get-context/)
 
 ## Validation
 
-Run `python scripts/validate_examples.py` from the repository root. It checks all six schemas, every registered public fixture, all seven current Archive V4 regression suites and their JSON fixtures, expected invalid fixtures, exact-date equality, and the two exported output-spec result structures. The canonical regression evidence is the [V4 regression report](../regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md).
+From the repository root, run:
+
+```powershell
+python scripts/validate_examples.py
+```
+
+The script currently checks:
+
+* all six request and response schemas;
+* the registered example payloads;
+* fixtures that are expected to fail validation;
+* the seven Archive V4 regression suites and their JSON fixtures;
+* the extra equality rule for exact-date `get_context` requests;
+* the exported result structures for `search_archive` and `get_context`.
+
+The Archive regression results are recorded in the [V4 regression report](../regression-tests/Weft_full_regression_test_report_archive_conversation_V4.md).
+
+These checks validate the stored schemas, fixtures, and recorded regression expectations. They do not replace runtime verification after a Make blueprint or workflow behavior changes.
